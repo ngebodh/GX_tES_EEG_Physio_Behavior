@@ -160,6 +160,9 @@ EEG.nbchan=length(Chans);
 EEG.etc=[];
 EEG.trials=[];
 
+%Remove extra trigger
+if DatasetsIncluded{ii}=='1401', EEG.triggers(1)= []; end 
+
 DataEEG{numcount}=EEG.data([Chans],:);
 % DataEEG{numcount}=EEG.data([33,35],:);
 
@@ -443,10 +446,10 @@ clear DatInPlot1 DatInPlot2 DatInPlot3
      end 
     
  end 
+
  
  
- 
- %Here we sort all the data that we gathered
+%Here we sort all the data that we gathered
  clear VarianceRatio CoeffVariationRatio PercenMoreThanThresPerDiff PrePostMeanDiffPerfPulledInMedian PrePostMeanDiffPerfPulledInMean PrePostMeanDiffPerfPulledInMeanPercent
  MontageMat2={'F30','M30',};
  
