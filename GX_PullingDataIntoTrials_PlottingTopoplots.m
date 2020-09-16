@@ -23,13 +23,13 @@ close all
 %% Set Flags
 
 SaveTrialedData=1; %Save the trialed data 0-No don't save, 1- Yes, save.
-PlotTopoplots=1; %Defines if you want topoplots for each stim trial plotted
+PlotTopoplots=0; %Defines if you want topoplots for each stim trial plotted
 SveAllpics=1; 
 closefigs=1;
 ClearMatfiles=1;
 PhaseDesignAll=1;%Run both phase 1 and 2? 1-Yes, 0-No. 
 PhaseDesign=2;   %If run specific phase, select phase, either 1 or 2 
-Daterec='07022020';
+Daterec='09142020';
 
 
 %% Create Results folder        
@@ -221,11 +221,16 @@ N=size(DataEEG{numcount},2);
 ref = [1:32];              %Electrodes to reference to
 nchan=32;
 
+        if exist('Standard-10-10-Cap33_V6.loc')~=0
+            Loc4Chans=['Standard-10-10-Cap33_V6.loc'];
+            EEG.chanlocs = readlocs(Loc4Chans);
+        else
+            for uu=1:10, disp('.'), end 
+            disp(['The cap location file: ',Loc4Chans,' cannot be found in the current directory. Please locate it in order to ',...
+                'do topographic ploting. Continuing without it.'])
+           for uu=1:10, disp('.'), end 
+        end 
 
-Loc4Chans=['Standard-10-10-Cap33_V6.loc'];
-EEG.chanlocs = readlocs(Loc4Chans);
- 
-    
         %Baseline and drift correct the data
         Adj_topoly_Each{numcount}=DataEEG{numcount};
         baselineT=   find(t{numcount}>1 & t{numcount}<5);  %was 60 find(t>-10 & t<50);  % for baseline correction 
@@ -496,7 +501,7 @@ Perfout.PostStim{mm,1}       =ptrackerPerf{ii}(Evnt_Stimstrt2(mm)+(41.5*desiredF
 Perfout.PostStim{mm,2}       =MontAll{ii,mm};
 
     
-     
+%=======================Plot Topoplot Loop ================================     
      if PlotTopoplots==1
          
         
@@ -772,12 +777,127 @@ Perfout.PostStim{mm,2}       =MontAll{ii,mm};
      
      
      
-     end 
+     end %======================= End of Plot Topoplot Loop ===============   
+ 
      
      end 
      
- end 
+ end %======================= End Stim Trials Loop ===============   
 
+
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ % ====================== Parcing the No Stimulation Trials ================
+
+
+if PhaseDesign==1
+    tThresh=598; %This is the time threshold between triggers to look at
+    tLen=570; %This is the block length minus 30 secs to exclude samples in stim periods 600[10 mins]-30 secs
+else
+    tThresh=1190; %This is the time threshold between triggers to look at
+    tLen=1170; %This is the block length minus 30 secs to exclude samples in stim periods 1200[20 mins]-30 secs    
+end % End of Phase picking loop.     
+
+
+        %Find the block start trigger time points
+        clear dummy NoStim_BlockStart_indx NoStim_strt_samp; 
+        dummy=diff(AllEventsTime{ii}); %write to dummy variable
+
+        %Find the trigger differeneces that are more than 600+/-2 seconds (10 mins)
+        NoStim_BlockStart_indx=find((dummy>tThresh));
+
+        %Gives you the indicies
+        NoStim_strt_samp=AllEvents{ii}(NoStim_BlockStart_indx);
+
+
+         %Once you have in no stim block start sample indicies from above, you can
+         %plug them in one by one to get the "pre stim" start time (its not )
+
+         mm=1; %This will be a trial counter
+
+         clear NoStim_all_chunk_start_EEG NoStim_all_chunk_start_CTT
+         for nn=1:length(NoStim_strt_samp) %This defines the number of blocks detected
+             
+         %This will give you all the trial start times for each block
+         NoStim_all_chunk_start_EEG(nn,:)=NoStim_strt_samp(nn):(30*fs{1}):NoStim_strt_samp(nn)+(tLen*fs{1}); %Hardcoded numbers are in secs
+
+         NoStim_all_chunk_start_CTT(nn,:)=floor((NoStim_all_chunk_start_EEG(nn,:)-AllEvents{ii}(1)).*(desiredFs/fs{ii}))+1;%Adjust for delay between EEG and task start, add one so no 0 index error
+
+         
+         for kk=1:length(NoStim_all_chunk_start_EEG(nn,:))-3 %Minus 3 b/c we're using the pre trigger to get the during and post
+
+             %========================   EEG  =====================================
+             %Pre Stim 
+             clear Pre_ch_EEG Pre_ch_CTT
+             Pre_ch_EEG =NoStim_all_chunk_start_EEG(nn,kk):NoStim_all_chunk_start_EEG(nn,kk+1);
+             Pre_ch_CTT =NoStim_all_chunk_start_CTT(nn,kk):NoStim_all_chunk_start_CTT(nn,kk+1);
+
+                 %EEG
+                 EEGoutNoStim.PreStim_Off{mm,1}   =BLcorDC{ii}(1:34   ,  Pre_ch_EEG); 
+                 EEGoutNoStim.PreStim_Off{mm,2}   ='NoStim'; 
+
+                 %Performance 
+                 PerfoutNoStim.PreStim_Off{mm,1}  =ptrackerPerf{ii}(Pre_ch_CTT,1); 
+                 PerfoutNoStim.PreStim_Off{mm,2}  ='NoStim';
+             
+             %During Stim 
+             clear Dur_ch_EEG Dur_ch_CTT
+             Dur_ch_EEG =NoStim_all_chunk_start_EEG(nn,kk+1):NoStim_all_chunk_start_EEG(nn,kk+2);
+             Dur_ch_CTT =NoStim_all_chunk_start_CTT(nn,kk+1):NoStim_all_chunk_start_CTT(nn,kk+2);
+             
+                 %EEG
+                 EEGoutNoStim.DuringStim_Off{mm,1}   =BLcorDC{ii}(1:34   ,  Dur_ch_EEG);
+                 EEGoutNoStim.DuringStim_Off{mm,2}   =num2str(kk); %Label them by trial
+                 
+                 %Performance 
+                 PerfoutNoStim.DuringStim_Off{mm,1}  =ptrackerPerf{ii}(Dur_ch_CTT,1); 
+                 PerfoutNoStim.DuringStim_Off{mm,2}  ='NoStim';
+             
+             
+             %Post Stim 
+             clear Post_ch_EEG Post_ch_CTT
+             Post_ch_EEG =NoStim_all_chunk_start_EEG(nn,kk+2):NoStim_all_chunk_start_EEG(nn,kk+3);
+             Post_ch_CTT =NoStim_all_chunk_start_CTT(nn,kk+2):NoStim_all_chunk_start_CTT(nn,kk+3);
+             
+                 %EEG
+                 EEGoutNoStim.PostStim_Off{mm,1}   =BLcorDC{ii}(1:34   ,  Post_ch_EEG);
+                 EEGoutNoStim.PostStim_Off{mm,2}   =num2str(kk); %Label them by trial
+                 
+                 %Performance 
+                 PerfoutNoStim.PostStim_Off{mm,1}  =ptrackerPerf{ii}(Post_ch_CTT,1); 
+                 PerfoutNoStim.PostStim_Off{mm,2}  ='NoStim';
+             %========================   CTT  =====================================
+             
+
+         mm=mm+1; %Increase trial counter.
+         end 
+         end 
+         
+         
+
+
+ 
+ % ==================================================================================
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ % ======================= Save the Output ================================
+ 
  
 BLcorDC{ii}=[];
 Evnt_StimstrtAll{ii,:}=Evnt_Stimstrt;
@@ -785,7 +905,8 @@ Evnt_StimstrtAll{ii,:}=Evnt_Stimstrt;
 SelectedFileNum=DatasetsIncluded{ii};
 
 if SaveTrialedData==1
-save(strcat(prefix,DatasetsIncluded{ii},'_EEG.mat'), 'EEGout','Perfout','EEG','MontAll','SelectedFileNum','-v7');
+save(strcat(prefix,DatasetsIncluded{ii},'_EEG.mat'), 'EEGout','Perfout','PerfoutNoStim','EEG','MontAll','SelectedFileNum','-v7.3');
+save(strcat(prefix,DatasetsIncluded{ii},'_EEG_NoStim.mat'), 'EEGoutNoStim','PerfoutNoStim','EEG','MontAll','SelectedFileNum','-v7.3');
 end 
  
 end  % End of each subject loading 

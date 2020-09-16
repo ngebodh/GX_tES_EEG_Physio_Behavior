@@ -23,13 +23,13 @@ close all
 %% Set Flags
 
 SaveTrialedData=1; %Save the trialed data 0-No don't save, 1- Yes, save.
-PlotTopoplots=1; %Defines if you want topoplots for each stim trial plotted
+PlotTopoplots=0; %Defines if you want topoplots for each stim trial plotted
 SveAllpics=1; 
 closefigs=1;
 ClearMatfiles=1;
 PhaseDesignAll=1;%Run both phase 1 and 2? 1-Yes, 0-No. 
 PhaseDesign=2;   %If run specific phase, select phase, either 1 or 2 
-Daterec='07012020';
+Daterec='09142020';
 
 
 %% Create Results folder        
@@ -221,11 +221,16 @@ N=size(DataEEG{numcount},2);
 ref = [1:32];              %Electrodes to reference to
 nchan=32;
 
+        if exist('Standard-10-10-Cap33_V6.loc')~=0
+            Loc4Chans=['Standard-10-10-Cap33_V6.loc'];
+            EEG.chanlocs = readlocs(Loc4Chans);
+        else
+            for uu=1:10, disp('.'), end 
+            disp(['The cap location file: ',Loc4Chans,' cannot be found in the current directory. Please locate it in order to ',...
+                'do topographic ploting. Continuing without it.'])
+           for uu=1:10, disp('.'), end 
+        end 
 
-Loc4Chans=['Standard-10-10-Cap33_V6.loc'];
-EEG.chanlocs = readlocs(Loc4Chans);
- 
-    
         %Baseline and drift correct the data
         Adj_topoly_Each{numcount}=DataEEG{numcount};
         baselineT=   find(t{numcount}>1 & t{numcount}<5);  %was 60 find(t>-10 & t<50);  % for baseline correction 
@@ -496,12 +501,12 @@ Perfout.PostStim{mm,1}       =ptrackerPerf{ii}(Evnt_Stimstrt2(mm)+(41.5*desiredF
 Perfout.PostStim{mm,2}       =MontAll{ii,mm};
 
     
-     
+%=======================Plot Topoplot Loop ================================     
      if PlotTopoplots==1
          
         
      figure;
-     clear h1 
+     clear h1 pxx
      for jj=1:3
          clear datin datpull datmont locs ElecSaturated
          ElecSaturated=[];ElecNoisy=[];
@@ -527,7 +532,7 @@ Perfout.PostStim{mm,2}       =MontAll{ii,mm};
          elseif jj==2 %During Stim 
              %Normalize to  the pre stimulation data
              datpull=EEGout.DuringStim{mm,1}(1:32,:)-mean(EEGout.PreStim{mm,1}(1:32,:),2);
-%              datmont=EEGout.DuringStim{mm,2}; %Data montage             
+          
              
             if str2num(datmont(2))==0
                 locs=1:length(datpull);
@@ -541,7 +546,6 @@ Perfout.PostStim{mm,2}       =MontAll{ii,mm};
              
          elseif jj==3 %Post Stim 
              datpull=EEGout.PostStim{mm,1}(1:32,:);
-%              datmont=EEGout.PostStim{mm,2}; %Data montage
              datin=mean(datpull,2);
              labels='Post Stim';
              
@@ -573,11 +577,11 @@ Perfout.PostStim{mm,2}       =MontAll{ii,mm};
                  end 
 
                  %Check for noise
-                 clear pxx pxx16 ff; 
+                 clear pxx2 pxx16 ff; 
                  [pxx16, ~]=pwelch(datpull(16,:), 1000,500,1000,2000); 
-                 [pxx, ~]=pwelch(datpull(ee,:), 1000,500,1000,2000);
+                 [pxx2, ~]=pwelch(datpull(ee,:), 1000,500,1000,2000);
                  bndpw_Cz=bandpower(pxx16,2000,[55 65]);
-                 bndpw_EE=bandpower(pxx,2000,[55 65]);
+                 bndpw_EE=bandpower(pxx2,2000,[55 65]);
 
                  if (bndpw_EE/bndpw_Cz)>3.5
                      ElecNoisy{eenoisy}=EEG.chanlocs(ee).labels;
@@ -638,8 +642,8 @@ Perfout.PostStim{mm,2}       =MontAll{ii,mm};
          %Plot the welch spectrum
          subplot(2,4,[4,8])
 %          [pxx,ff]=pwelch(datpull(channum,:),2000,1000, 2000,2000);
-         [pxx(jj,:),ff]=pwelch(datpull(16,:),2000,1000, 2000,2000);
-         h1{jj,:}=plot(ff, db(pxx(jj,:)),'linewidth',2);
+         [pxx{jj},ff]=pwelch(datpull(16,:),2000,1000, 2000,2000);
+         h1{jj,:}=plot(ff, db(pxx{jj}),'linewidth',2);
          hold on
          ylabel(['PSD (dB/Hz)']);
          xlabel(['Frequency(Hz)']);
@@ -668,12 +672,12 @@ Perfout.PostStim{mm,2}       =MontAll{ii,mm};
      
      
      
+     
+     figure
      for jj=1:3
        %Plot the welch spectrum
-         subplot(2,4,[4,8])
-%          [pxx,ff]=pwelch(datpull(channum,:),2000,1000, 2000,2000);
-         [pxx,ff]=pwelch(datpull(16,:),2000,1000, 2000,2000);
-         h1{jj,:}=plot(ff, db(pxx),'linewidth',2);
+
+         h1{jj,:}=plot(ff, db(pxx{jj}),'linewidth',2);
          hold on
          ylabel(['PSD (dB/Hz)']);
          xlabel(['Frequency(Hz)']);
@@ -683,18 +687,30 @@ Perfout.PostStim{mm,2}       =MontAll{ii,mm};
          
          
      end
+     ylim([-50 150])
      hh=legend([h1{1:3}],{['\color[rgb]{' num2str(h1{1}.Color) '}Pre'],...
                           ['\color[rgb]{' num2str(h1{2}.Color) '}During'],...
                           ['\color[rgb]{' num2str(h1{3}.Color) '}Post']},'Location','Northwest');
      
+    fname=['Topo DC- Sub ',DatasetsIncluded{ii}, '-',datmont,' Trial ', num2str(mm),'-JustSpectrum'];
+    set(gcf,'Name',fname,'Position',[1000        1107         257         231]);
+
+    if SveAllpics==1
+        h = gcf;
+        saveas(h,strcat(prefix,fname,'.fig'),'fig');
+        saveas(h,strcat(prefix,fname,'.png'),'png');
+        saveas(h,strcat(prefix,fname,'.pdf'),'pdf');
+        print(h,'-dpng', [prefix,fname], '-r600');
+
+    end
+    if closefigs==1, close all,  end
+    
+    
      
-     
-     
-     
-     
-     
-     
-     
+    
+    
+    
+    
      figure;
      clear h1 
      
@@ -761,12 +777,127 @@ Perfout.PostStim{mm,2}       =MontAll{ii,mm};
      
      
      
-     end 
+     end %======================= End of Plot Topoplot Loop ===============   
+ 
      
      end 
      
- end 
+ end %======================= End Stim Trials Loop ===============   
 
+
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ % ====================== Parcing the No Stimulation Trials ================
+
+
+if PhaseDesign==1
+    tThresh=598; %This is the time threshold between triggers to look at
+    tLen=570; %This is the block length minus 30 secs to exclude samples in stim periods 600[10 mins]-30 secs
+else
+    tThresh=1190; %This is the time threshold between triggers to look at
+    tLen=1170; %This is the block length minus 30 secs to exclude samples in stim periods 1200[20 mins]-30 secs    
+end % End of Phase picking loop.     
+
+
+        %Find the block start trigger time points
+        clear dummy NoStim_BlockStart_indx NoStim_strt_samp; 
+        dummy=diff(AllEventsTime{ii}); %write to dummy variable
+
+        %Find the trigger differeneces that are more than 600+/-2 seconds (10 mins)
+        NoStim_BlockStart_indx=find((dummy>tThresh));
+
+        %Gives you the indicies
+        NoStim_strt_samp=AllEvents{ii}(NoStim_BlockStart_indx);
+
+
+         %Once you have in no stim block start sample indicies from above, you can
+         %plug them in one by one to get the "pre stim" start time (its not )
+
+         mm=1; %This will be a trial counter
+
+         clear NoStim_all_chunk_start_EEG NoStim_all_chunk_start_CTT
+         for nn=1:length(NoStim_strt_samp) %This defines the number of blocks detected
+             
+         %This will give you all the trial start times for each block
+         NoStim_all_chunk_start_EEG(nn,:)=NoStim_strt_samp(nn):(30*fs{1}):NoStim_strt_samp(nn)+(tLen*fs{1}); %Hardcoded numbers are in secs
+
+         NoStim_all_chunk_start_CTT(nn,:)=floor((NoStim_all_chunk_start_EEG(nn,:)-AllEvents{ii}(1)).*(desiredFs/fs{ii}))+1;%Adjust for delay between EEG and task start, add one so no 0 index error
+
+         
+         for kk=1:length(NoStim_all_chunk_start_EEG(nn,:))-3 %Minus 3 b/c we're using the pre trigger to get the during and post
+
+             %========================   EEG  =====================================
+             %Pre Stim 
+             clear Pre_ch_EEG Pre_ch_CTT
+             Pre_ch_EEG =NoStim_all_chunk_start_EEG(nn,kk):NoStim_all_chunk_start_EEG(nn,kk+1);
+             Pre_ch_CTT =NoStim_all_chunk_start_CTT(nn,kk):NoStim_all_chunk_start_CTT(nn,kk+1);
+
+                 %EEG
+                 EEGoutNoStim.PreStim_Off{mm,1}   =BLcorDC{ii}(1:34   ,  Pre_ch_EEG); 
+                 EEGoutNoStim.PreStim_Off{mm,2}   ='NoStim'; 
+
+                 %Performance 
+                 Perfout.PreStim_Off{mm,1}  =ptrackerPerf{ii}(Pre_ch_CTT,1); 
+                 Perfout.PreStim_Off{mm,2}  ='NoStim';
+             
+             %During Stim 
+             clear Dur_ch_EEG Dur_ch_CTT
+             Dur_ch_EEG =NoStim_all_chunk_start_EEG(nn,kk+1):NoStim_all_chunk_start_EEG(nn,kk+2);
+             Dur_ch_CTT =NoStim_all_chunk_start_CTT(nn,kk+1):NoStim_all_chunk_start_CTT(nn,kk+2);
+             
+                 %EEG
+                 EEGoutNoStim.DuringStim_Off{mm,1}   =BLcorDC{ii}(1:34   ,  Dur_ch_EEG);
+                 EEGoutNoStim.DuringStim_Off{mm,2}   =num2str(kk); %Label them by trial
+                 
+                 %Performance 
+                 Perfout.DuringStim_Off{mm,1}  =ptrackerPerf{ii}(Dur_ch_CTT,1); 
+                 Perfout.DuringStim_Off{mm,2}  ='NoStim';
+             
+             
+             %Post Stim 
+             clear Post_ch_EEG Post_ch_CTT
+             Post_ch_EEG =NoStim_all_chunk_start_EEG(nn,kk+2):NoStim_all_chunk_start_EEG(nn,kk+3);
+             Post_ch_CTT =NoStim_all_chunk_start_CTT(nn,kk+2):NoStim_all_chunk_start_CTT(nn,kk+3);
+             
+                 %EEG
+                 EEGoutNoStim.PostStim_Off{mm,1}   =BLcorDC{ii}(1:34   ,  Post_ch_EEG);
+                 EEGoutNoStim.PostStim_Off{mm,2}   =num2str(kk); %Label them by trial
+                 
+                 %Performance 
+                 Perfout.PostStim_Off{mm,1}  =ptrackerPerf{ii}(Post_ch_CTT,1); 
+                 Perfout.PostStim_Off{mm,2}  ='NoStim';
+             %========================   CTT  =====================================
+             
+
+         mm=mm+1; %Increase trial counter.
+         end 
+         end 
+         
+         
+
+
+ 
+ % ==================================================================================
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ % ======================= Save the Output ================================
+ 
  
 BLcorDC{ii}=[];
 Evnt_StimstrtAll{ii,:}=Evnt_Stimstrt;
