@@ -31,13 +31,24 @@ tic
 %plotted figures (1-Yes plot, 0-No don't plot). 
 SveAllpics=0; 
 closefigs=0;
+matlab_version='2019b';
+
+
+%Double check versions. 
+[ver]=version;
+ver(end-14:end-10)
+    if strmatch(ver(end-14:end-10),matlab_version)
+        disp('Versions match moving on')
+    else 
+        error("SCRIPT ERROR: The MATLAB version you assigned in 'matlab_version' does not match the MATLAB verions detected")
+    end 
 
 
 %% Create Results folder        
 
 
-    pathsave=strcat('D:\GX Project\Results\DataOutput_Exp1_CTT\');
-
+%     pathsave=strcat('D:\GX Project\Results\DataOutput_Exp1_CTT\');
+    pathsave=strcat('D:\GX\Results\DataOutput_Exp1_CTT\');
     prefix = strcat(pathsave);
 
     if SveAllpics==1 %1-Save output pics, 0-Don'd save output pics
@@ -61,7 +72,8 @@ closefigs=0;
 %% Define Data Locations and Files to Look At
 
 %This is where all the data are stored
-DataLoc='D:\GX Project\Data\'
+% DataLoc='D:\GX Project\Data\'
+DataLoc='D:\GX\Data\';
 %These are the files that we want to look at
 DatasetsIncluded={'0102','0103','0104',...
                   '0201','0202',...
@@ -83,32 +95,79 @@ enUpAll=[]; enLwAll=[];
 
 for ii=1:length(DatasetsIncluded)
 SelectedFle=strcat(DataLoc,DatasetsIncluded{ii},'\',DatasetsIncluded{ii},'\','ptracker-',DatasetsIncluded{ii},'.csv');
-
-opts.SelectedVariableNames = [3,11]; 
-opts.DataRange = '';
 filename = SelectedFle;%'D:\GX Project\Data\0101\0101\ptracker-0101.csv';
-delimiter = ',';
-startRow = 2;
 
-% For more information, see the TEXTSCAN documentation.
-formatSpec = '%f%f%f%f%f%f%f%f%f%f%f%f%f%[^\n\r]';
+if strmatch(ver(end-14:end-10),'2018a')
+%% Matlab version 2018a Import
+    opts.SelectedVariableNames = [3,11]; 
+    opts.DataRange = '';
+        delimiter = ',';
+    startRow = 2;
 
-% Open the text file.
-fileID = fopen(filename,'r');
+    % For more information, see the TEXTSCAN documentation.
+    formatSpec = '%f%f%f%f%f%f%f%f%f%f%f%f%f%[^\n\r]';
 
-% Read columns of data according to the format.
-% This call is based on the structure of the file used to generate this
-% code. If an error occurs for a different file, try regenerating the code
-% from the Import Tool.
-dataArray = textscan(fileID, formatSpec, 'Delimiter', delimiter, 'TextType',...
-            'string', 'EmptyValue', NaN, 'HeaderLines' ,startRow-1, 'ReturnOnError', false, 'EndOfLine', '\r\n');
+    % Open the text file.
+    fileID = fopen(filename,'r');
 
-% Close the text file.
-fclose(fileID);
+    % Read columns of data according to the format.
+    % This call is based on the structure of the file used to generate this
+    % code. If an error occurs for a different file, try regenerating the code
+    % from the Import Tool.
+    dataArray = textscan(fileID, formatSpec, 'Delimiter', delimiter, 'TextType',...
+                'string', 'EmptyValue', NaN, 'HeaderLines' ,startRow-1, 'ReturnOnError', false, 'EndOfLine', '\r\n');
 
-%We just want time and Performance 
-ptrackerData{ii} = [dataArray{[3,11]}];%[dataArray{1:end-1}];
-ptrackerData{ii}(:,1)=(ptrackerData{ii}(:,1)-ptrackerData{ii}(1,1))./1000; %Minus the 1st sample and convert to seconds
+    % Close the text file.
+    fclose(fileID);
+    clear opts
+
+   
+    %We just want time and Performance 
+    ptrackerData{ii} = [dataArray{[3,11]}];%[dataArray{1:end-1}];
+    ptrackerData{ii}(:,1)=(ptrackerData{ii}(:,1)-ptrackerData{ii}(1,1))./1000; %Minus the 1st sample and convert to seconds
+    
+elseif strmatch(ver(end-14:end-10),'2019b')    
+%% Matlab version 2019b Import
+    % Setup the Import Options and import the data
+    opts = delimitedTextImportOptions("NumVariables", 13);
+
+    % Specify range and delimiter
+    opts.DataLines = [2, Inf];
+    opts.Delimiter = ",";
+
+    % Specify column names and types
+    opts.VariableNames = ["subnum", "trial", "time", "posX", "posY", "userdeltaX", "userdeltaY", "timeDelta", "targetDeltaX", "targetDeltaY", "deviation", "mouseD1", "mouseD2"];
+    opts.VariableTypes = ["double", "double", "double", "double", "double", "double", "double", "double", "double", "double", "double", "double", "double"];
+
+    % Specify file level properties
+    opts.ExtraColumnsRule = "ignore";
+    opts.EmptyLineRule = "read";
+
+    % Import the data
+    dataArray = readtable(filename, opts);
+
+    % Convert to output type
+    dataArray= table2array(dataArray);
+
+    % Clear temporary variables
+    clear opts
+
+    
+    
+    %We just want time and Performance 
+    ptrackerData{ii} = dataArray(:,[3,11]);%[dataArray{1:end-1}];
+    ptrackerData{ii}(:,1)=(ptrackerData{ii}(:,1)-ptrackerData{ii}(1,1))./1000; %Minus the 1st sample and convert to seconds
+else
+    error("Data import not supported for this version of MATLAB please import data to dataArray manually and use 'Generate Script' option.")
+end 
+
+
+
+
+
+
+
+
 
 %% Clear temporary variables
 clearvars filename delimiter startRow formatSpec fileID dataArray ans;
@@ -130,9 +189,12 @@ toc
 Chans=[1:32];
 numcount=ii;
         %Define where each EEG file is 
-        GetFilesFrom=strcat('D:\GX Project\Data\' ,DatasetsIncluded{ii},'\');
+%         GetFilesFrom=strcat('D:\GX Project\Data\' ,DatasetsIncluded{ii},'\');
+        GetFilesFrom=strcat(DataLoc ,DatasetsIncluded{ii},'\');
         if ~exist( GetFilesFrom)
             numcount= numcount+1; %Added to keep the order of existing files 
+            disp(['....Subject file not detected in folder: ' GetFilesFrom])
+            disp(['..Skipping subject file: ' DatasetsIncluded{ii}])
             return
             
         end 
