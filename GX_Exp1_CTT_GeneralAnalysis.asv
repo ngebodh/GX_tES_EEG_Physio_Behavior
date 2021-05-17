@@ -621,16 +621,14 @@ boxplot(DatIn)
 ylabel('Change(%)')
 set(gca,'XTick',[1:9],'XTickLabels', MontageMat2)
 
-DatIn_SE = nanstd(DatIn)./sqrt(sum(~isnan(DatIn),1));
+
 figure; 
 bar(nanmean(DatIn,1))
 hold on
-% plot(1:9, DatIn,'k*')
-% hold on
-errorbar(1:9, nanmean(DatIn),DatIn_SE*1.95); xlim([0.5 9.5])
+plot(1:9)
 set(gca,'XTick',[1:9],'XTickLabels', MontageMat2)
-ylabel('Change(%)')
 
+DatIn_SE = nanstd(DatIn)./sqrt(sum(~isnan(DatIn),1));
 
  clrs = cbrewer('seq', 'Blues', 20, 'pchip');
  bxpltclr =[241, 161, 4]./255;%[255,20,147]./255; [1, 146, 255]./255;%
