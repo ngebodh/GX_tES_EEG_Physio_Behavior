@@ -1,16 +1,27 @@
 %% GX_Pilot Data Pull out Perf to Segments
 %
 %Code written to chunck out the EEG and performance data into trials.
-%The code chunks all the traisl regardless of stim type. 
+%The code chunks all the trials regardless of stim type. 
 %
 % 
 % Written by: Nigel Gebodh Dec. 2019
+%
 %
 %Design
 %{
 Chunk the EEG data into trials
 Chuck the performance data into trials
 The stim types are indicated with the 'MontAll' variable
+
+%Updates:
++5/20/21
+-Adjusted paths to be used on different machine (TO DO: make paths
+relative). We also need to make sure to have the montage matrix since Exp1
+analysis relies on it. 
+-The path to check for the data folder's existance need to change and be
+updated to take in a path from the begining of the code. Right now its hard
+coded and needs to be changed if the data path changes (TO DO: make the data
+relative of make it use a path defined at the beginning of the script).
 
 
 %}
@@ -23,26 +34,26 @@ close all
 %% Set Flags
 
 SaveTrialedData=1; %Save the trialed data 0-No don't save, 1- Yes, save.
-PlotTopoplots=0; %Defines if you want topoplots for each stim trial plotted
+PlotTopoplots=1; %Defines if you want topoplots for each stim trial plotted
 SveAllpics=1; 
 closefigs=1;
 ClearMatfiles=1;
 PhaseDesignAll=1;%Run both phase 1 and 2? 1-Yes, 0-No. 
 PhaseDesign=2;   %If run specific phase, select phase, either 1 or 2 
-Daterec='09142020';
+Daterec='05182021';%'09142020';
 
 
 %% Create Results folder        
 
 if PhaseDesignAll==0
     if PhaseDesign==2
-        pathsave=strcat(['D:\GX Project\Results\DataChunkedtoTrials_Phase2_' Daterec '\']);
+        pathsave=strcat(['D:\GX\Results\DataChunkedtoTrials_Phase2_' Daterec '\']);
     else 
-       pathsave=strcat(['D:\GX Project\Results\DataChunkedtoTrials_Phase1_' Daterec '\']);
+       pathsave=strcat(['D:\GX\Results\DataChunkedtoTrials_Phase1_' Daterec '\']);
     end 
     DesignLoop=PhaseDesign;
 else
-    pathsave=strcat(['D:\GX Project\Results\DataChunkedtoTrials_AllPhases_' Daterec '\']);
+    pathsave=strcat(['D:\GX\Results\DataChunkedtoTrials_AllPhases_' Daterec '\']);
     DesignLoop=1:2;
 end 
 
@@ -69,13 +80,16 @@ end
             prefix = strcat(pathsave,'FigOutput','\');
         end
     end 
+    
+    
+    
 
 for PhaseDesign= DesignLoop             
         
 %% Define Data Locations and Files to Look At
 
 %This is where all the data are stored
-DataLoc='D:\GX Project\Data\';
+DataLoc='D:\GX\Data\';
 %These are the files that we want to look at
 if PhaseDesign==2
     DatasetsIncluded={...
@@ -115,9 +129,14 @@ if PhaseDesign==2
 else 
     %This needs to be fixed. I need to pass the proper montage matrix
     MontageMat2={'F0','F5','F30','M0','M5','M30','P0','P5','P30'};
-   load(['D:\GX Project\Results\DataChunkedtoTrials_12162019\FigOutput\','MontAllCompiled.mat'])
+    load('MontAllCompiled.mat');
+%    load(['D:\GX Project\Results\DataChunkedtoTrials_12162019\FigOutput\','MontAllCompiled.mat'])
 end
 
+
+
+
+%% Getting Behavioral Data In
 
 for ii=1:length(DatasetsIncluded)
     disp(['Now running ' DatasetsIncluded{ii} '.....' ])
@@ -153,6 +172,7 @@ fclose(fileID);
 ptrackerData{ii} = [dataArray{[3,11]}];%[dataArray{1:end-1}];
 ptrackerData{ii}(:,1)=(ptrackerData{ii}(:,1)-ptrackerData{ii}(1,1))./1000; %Minus the 1st sample and convert to seconds
 
+
 %% Clear temporary variables
 clearvars filename delimiter startRow formatSpec fileID dataArray ans;
 
@@ -169,11 +189,12 @@ tic
 toc
  
  
- %% Getting the EEG 
+%% Getting the EEG Data In
 Chans=[1:32];
 numcount=ii;
         %Define where each EEG file is 
-        GetFilesFrom=strcat('D:\GX Project\Data\' ,DatasetsIncluded{ii},'\');
+%         GetFilesFrom=strcat('D:\GX Project\Data\' ,DatasetsIncluded{ii},'\');
+        GetFilesFrom=strcat('D:\GX\Data\' ,DatasetsIncluded{ii},'\');
         if ~exist( GetFilesFrom)
             numcount= numcount+1; %Added to keep the order of existing files 
             return
@@ -287,7 +308,9 @@ end
 % % % %  end 
 % % % % 
 % % % % end
-%%
+
+
+%% Fixing Known Bad Electrodes
 
     
 
@@ -412,7 +435,7 @@ EEG.time=[];
  %}
  
  
-%% 
+%% Cleaning up Montage Info 
 
 
  
@@ -472,7 +495,7 @@ end
  Evnt_BlockStart2=(Evnt_Stimstrt-AllEvents{ii}(1)).*(desiredFs/fs{ii});%
 
  
-
+%% Writing Trials to Var
 
  for mm=1:TrialTotals
    
@@ -500,11 +523,19 @@ Perfout.DuringStim{mm,2}     =MontAll{ii,mm};
 Perfout.PostStim{mm,1}       =ptrackerPerf{ii}(Evnt_Stimstrt2(mm)+(41.5*desiredFs):Evnt_Stimstrt2(mm)+((41.5+30)*desiredFs),1); 
 Perfout.PostStim{mm,2}       =MontAll{ii,mm};
 
-    
-%=======================Plot Topoplot Loop ================================     
+
+%% Plotting Topos Loop    
+% =======================Plot Topoplot Loop ================================     
      if PlotTopoplots==1
+     
          
-        
+     
+     %=====================================================================
+     %              Topos, Timeseries, Welch Spectrum In one 
+     %=====================================================================
+     %This section plots the Pre, During, Post stim topoplots, timeeries and the Welch spectrum in on figure for each subject and each trial.
+         %The next section plots the Pre During Post stim Welch spectrum and
+         %the topoplot for during stim. 
      figure;
      clear h1 pxx
      for jj=1:3
@@ -672,9 +703,14 @@ Perfout.PostStim{mm,2}       =MontAll{ii,mm};
      
      
      
-     
+     %=====================================================================
+     %                  Welch Spectrum Only 
+     %=====================================================================
+     %This section plots the Pre, During, Post stim Welch spectrum and
+     %topoplots
+    
      figure
-     for jj=1:3
+     for jj=1:3 %Pre, During, Post
        %Plot the welch spectrum
 
          h1{jj,:}=plot(ff, db(pxx{jj}),'linewidth',2);
@@ -705,12 +741,110 @@ Perfout.PostStim{mm,2}       =MontAll{ii,mm};
     end
     if closefigs==1, close all,  end
     
-    
+     %=====================================================================
+     %                  Calculate Bandpower Ratio
+     %=====================================================================
      
-    
-    
-    
-    
+     
+    band_strt =[0 3 7  12 28];
+    bands_end =[3 7 12 20 32];
+     for bb=1:3
+         for bb2 =1: length(band_strt)
+     
+            bndpwer(bb, bb2) = bandpower(db(pxx{bb}),ff,[band_strt(bb2) bands_end(bb2)],'psd');
+        end 
+     end 
+     bndpwer_ratio = abs(bndpwer(2,:)./bndpwer(1,:));%Ratio of During/pre
+     EEGout.BandPower{mm,1}  =bndpwer_ratio;
+     EEGout.BandPower{mm,2}  =MontAll{ii,mm};
+     EEGout.BandPower{mm,3}  ={'0-3 Hz','3-7 Hz','7-12 Hz','12-20 Hz','28-32 Hz'};
+     
+     
+     %=====================================================================
+     %                  Calculate Peak Frequency
+     %=====================================================================
+     
+         datmont=EEGout.PreStim{mm,2}; %Data montage
+         if ~isempty( datmont)
+             if str2num(datmont(2:end))==30 || str2num(datmont(2:end))==5
+                 clear pks locs
+                 %Since we only want to look at during stim we only look at
+                 %dimension 2 : db(pxx{2}
+                 [pks, locs]=findpeaks(db(pxx{2}),'MinPeakProminence',65,'Annotate','extents')
+                 %Peak PSD in dB
+                 EEGout.BandPower{mm,4}=pks(1); 
+                 
+                 %Peak frequency in Hz
+                 EEGout.BandPower{mm,5}=locs(1);
+
+             elseif str2num(datmont(2:end))==0
+                 %Since its a 1-sided spectrum in the ppx variable we can't
+                 %can't use the find peaks algo because it does not peak
+                 %and go down before 0. So we'll just take the max at 0. 
+                 
+                 %Peak PSD in dB
+                 EEGout.BandPower{mm,4}= db(pxx{2}(1));
+
+                 %Peak frequency in Hz
+                 EEGout.BandPower{mm,5}=0;
+
+             end
+         end 
+     
+     
+     [b,a]=butter(3,[[0.5, 40]/1000],'bandpass');
+     figure; 
+     test=filtfilt(b,a,BLcorDC{1,1}(16,:));
+     time_vect=([0:length(test)-1]/fs{1})/60;
+     plot(time_vect, test,'color',[	0, 115, 117]./255);
+     hold on
+     time_vect_perf=([0:length(test)-1]/fs{1})/60;
+     plot(time_vect,ptrackerPerf{ii},'color',[139, 0, 0] ./255)
+%      plot(AllEvents{1,1},test(AllEvents{1,1}),'r*')
+     hold on
+     for kk =1:length(AllEvents{1,1})
+        xl=xline(AllEventsTime{1,1}(kk)/60);
+        
+        if str2num(AllEventsCode{1,1}{kk})==2
+           xl.Label={'Block Start Code:02'}
+           xl.LineStyle =':'
+           xl.LabelHorizontalAlignment = 'left';
+            xl.LabelVerticalAlignment = 'bottom';
+        elseif str2num(AllEventsCode{1,1}{kk})==16
+           xl.Label={'Stim Start Code:16'}
+           xl.LineStyle =':'   
+           xl.LabelHorizontalAlignment = 'left';
+           xl.LabelVerticalAlignment = 'top';
+        elseif str2num(AllEventsCode{1,1}{kk})==32
+           xl.Label={'Stim Stop Code:32'}
+           xl.LineStyle =':'   
+           xl.LabelHorizontalAlignment = 'right';
+           xl.LabelVerticalAlignment = 'bottom';
+        end 
+      
+      hold on
+     end 
+     ylabel('Voltage (\muV)')
+     xlabel('Time(mins)')
+     xlim([min(time_vect)-1.5,max(time_vect)+1])
+     fname=['WholeTimeseries- Sub ',DatasetsIncluded{ii}, '-',strcat(Montages{:}),' Trial ', num2str(mm),' Elec-',EEG.chanlocs(16).labels];
+     set(gca, 'XMinorTick','on') 
+     set(gcf,'Name',fname,'Position',[2 634 1917 389]);
+     
+     if SveAllpics==1
+         h = gcf;
+         saveas(h,strcat(prefix,fname,'.fig'),'fig');
+%          saveas(h,strcat(prefix,fname,'.png'),'png');
+%          saveas(h,strcat(prefix,fname,'.pdf'),'pdf');
+         print(h,'-dpng', [prefix,fname], '-r300');
+         print(h,'-dpdf', [prefix,fname], '-r600');
+         
+     end
+     
+     %=====================================================================
+     %                  During Stim Topos Only 
+     %=====================================================================
+     
      figure;
      clear h1 
      
@@ -846,8 +980,8 @@ end % End of Phase picking loop.
                  EEGoutNoStim.PreStim_Off{mm,2}   ='NoStim'; 
 
                  %Performance 
-                 Perfout.PreStim_Off{mm,1}  =ptrackerPerf{ii}(Pre_ch_CTT,1); 
-                 Perfout.PreStim_Off{mm,2}  ='NoStim';
+                 PerfoutNoStim.PreStim_Off{mm,1}  =ptrackerPerf{ii}(Pre_ch_CTT,1); 
+                 PerfoutNoStim.PreStim_Off{mm,2}  ='NoStim';
              
              %During Stim 
              clear Dur_ch_EEG Dur_ch_CTT
@@ -859,8 +993,8 @@ end % End of Phase picking loop.
                  EEGoutNoStim.DuringStim_Off{mm,2}   =num2str(kk); %Label them by trial
                  
                  %Performance 
-                 Perfout.DuringStim_Off{mm,1}  =ptrackerPerf{ii}(Dur_ch_CTT,1); 
-                 Perfout.DuringStim_Off{mm,2}  ='NoStim';
+                 PerfoutNoStim.DuringStim_Off{mm,1}  =ptrackerPerf{ii}(Dur_ch_CTT,1); 
+                 PerfoutNoStim.DuringStim_Off{mm,2}  ='NoStim';
              
              
              %Post Stim 
@@ -873,8 +1007,8 @@ end % End of Phase picking loop.
                  EEGoutNoStim.PostStim_Off{mm,2}   =num2str(kk); %Label them by trial
                  
                  %Performance 
-                 Perfout.PostStim_Off{mm,1}  =ptrackerPerf{ii}(Post_ch_CTT,1); 
-                 Perfout.PostStim_Off{mm,2}  ='NoStim';
+                 PerfoutNoStim.PostStim_Off{mm,1}  =ptrackerPerf{ii}(Post_ch_CTT,1); 
+                 PerfoutNoStim.PostStim_Off{mm,2}  ='NoStim';
              %========================   CTT  =====================================
              
 
@@ -889,7 +1023,17 @@ end % End of Phase picking loop.
  % ==================================================================================
  
  
+     %=====================================================================
+     %               Compile the Stim Params From BandPower
+     %=====================================================================
  
+     [b,a]=butter(3,[[0.5, 40]/1000],'bandpass');
+     test=filtfilt(b,a,BLcorDC{1,1}(16,:));
+     time_vect=([0:length(test)-1]/fs{1})/60;  
+     
+     EEG_SpecInfo{ii,1}=EEGout.BandPower;
+     EEG_SpecInfo{ii,2}=DatasetsIncluded{ii};
+     EEG_SpecInfo{ii,3}=[test;time_vect]; %This is just the concatinated time(minutes) and voltage (uV)
  
  
  
@@ -905,13 +1049,15 @@ Evnt_StimstrtAll{ii,:}=Evnt_Stimstrt;
 SelectedFileNum=DatasetsIncluded{ii};
 
 if SaveTrialedData==1
-save(strcat(prefix,DatasetsIncluded{ii},'_EEG.mat'), 'EEGout','Perfout','EEG','MontAll','SelectedFileNum','-v7');
+save(strcat(prefix,DatasetsIncluded{ii},'_EEG.mat'), 'EEGout','Perfout','PerfoutNoStim','EEG','MontAll','SelectedFileNum','-v7.3');
+save(strcat(prefix,DatasetsIncluded{ii},'_EEG_NoStim.mat'), 'EEGoutNoStim','PerfoutNoStim','EEG','MontAll','SelectedFileNum','-v7.3');
+
 end 
  
 end  % End of each subject loading 
 
 
-
+save(strcat(prefix,'EEG_SpecInfo.mat'), 'EEG_SpecInfo','-v7.3');
 end %End of Phase design
 
 

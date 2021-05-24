@@ -29,7 +29,7 @@ tic
 %% Set Flags
 %Set if to save the figure (1-Yes save, 0-No don't save) or to close all
 %plotted figures (1-Yes plot, 0-No don't plot). 
-SveAllpics=1; 
+SveAllpics=0; 
 closefigs=0;
 matlab_version='2019b';
 
@@ -531,7 +531,7 @@ clear DatInPlot1 DatInPlot2 DatInPlot3
  %%% 
  clear PercenMoreThanThresPerDiffMean  CoeffVariationRatioMean  VarianceRatioMean 
  clear GenDiffPerfPulledInMeanPooled GenDiffPerfPulledInMedianPooled PerDiffPerfPulledInMeanPooled PerDiffPerfPulledInMedianPooled
- clear PerDiffPerfPulledInMeanZPooled PerDiffPerfPulledInMedianZPooled
+ clear PerDiffPerfPulledInMeanZPooled PerDiffPerfPulledInMedianZPooled PerDiffPerfPulledInStdPooled
  
   for ii=1:10
   for mm=1:length(MontageMat2)
@@ -546,7 +546,7 @@ clear DatInPlot1 DatInPlot2 DatInPlot3
 
      
      PerDiffPerfPulledInMeanPooled{ii,mm}=nanmean([PercenDiffPerfPulledInMean{ii,mm,:}]);
-
+     PerDiffPerfPulledInStdPooled{ii,mm}=nanstd([PercenDiffPerfPulledInMean{ii,mm,:}]);
      
      end 
   end 
