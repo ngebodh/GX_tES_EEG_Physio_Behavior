@@ -497,6 +497,124 @@ end
  
 %% Writing Trials to Var
 
+
+     %=====================================================================
+     %                 Plotting Chunked Out Trials 
+     %=====================================================================        
+        startT=60*1.75;
+        endT=60*2.5;
+        [b,a]=butter(3,[[0.5, 40]/1000],'bandpass');
+     for mm=1:length(Evnt_Stimstrt)
+     clear enUp enLw
+     pta1=Evnt_Stimstrt(mm)-(startT*fs{1});
+     pta2=(Evnt_Stimstrt2(mm))-(startT*desiredFs);
+
+     ptb1=Evnt_Stimstrt(mm)+(endT*fs{1});
+     ptb2=(Evnt_Stimstrt2(mm))+(endT*desiredFs);
+
+     Tseg=-startT:1/fs{1}:endT;
+     Tseg2=-startT:1/desiredFs:endT;
+
+
+    figure;  
+        subplot(3,1,1)
+            hold on;
+            hh1=plot(Tseg, filtfilt(b,a,BLcorDC{ii}(15,pta1:ptb1)));
+            hold on
+            plot(Tseg,0.25*filtfilt(b,a,BLcorDC{ii}(33,pta1:ptb1)),'r','LineWidth',2)
+            ylabel(['Voltage (\muV)'])
+
+            yyaxis right; hold on
+            PerfSorted{ii}(mm,:)=ptrackerPerf{ii}(pta2:ptb2,1);
+            hh2=plot(Tseg2, ptrackerPerf{ii}(pta2:ptb2,1));
+            hh2.Color =[255,177,176]./255;%rgb(255,100,97)255,177,176
+            
+            hh3 =plot(Tseg2,movmean(ptrackerPerf{ii}(pta2:ptb2,1),desiredFs*5),'k','LineWidth',2);
+            hh3.LineStyle ='-';
+            hh3.Color =[137,2,0]./255;%rgb(255,100,97)rgb(137,2,0)
+            set(gca,'ycolor',hh3.Color);
+            
+            line([0 0],[-1 1]*max(BLcorDC{ii}(15,pta1:ptb1))*1.5, 'Color','k','Linewidth',2);
+            ylabel(['Performance']);
+            legend([hh1(1) hh2(1)],{'C3','Perf'});
+            axis tight
+            ylim([0 max(ptrackerPerf{ii})+10]);
+            xlabel(['Time (sec)']);
+            title(['Stim & Performance for ', Mont{mm}]);
+
+
+          subplot(3,1,2)
+              spectrogram(filtfilt(b,a,BLcorDC{ii}(15,pta1:ptb1)),10000,9000,10000,2000,'yaxis')
+              colormap jet;
+              %       set(h,'XData',Tseg2)
+              %       colorbar('eastoutside')
+              colorbar('Position',...
+                  [0.916097122302158 0.408403361344538 0.0137589928057555 0.215406154854753]);
+              ylim([0 0.04]);
+              caxis([-60 30]);
+              title(['EEG Spectrogram']);
+
+
+          subplot(3,1,3)
+
+              h1 = raincloud_plot(PerfSorted{1,ii}(mm,1:find( Tseg2==0)), 'box_on', 1, 'color', [0 1 0 ], 'alpha', 0.5,...
+                  'box_dodge', 1, 'box_dodge_amount', .15, 'dot_dodge_amount', .35,... %0.35
+                  'box_col_match', 1);
+              h2 = raincloud_plot(PerfSorted{1,ii}(mm,find( Tseg2==0)+(100*5):find( Tseg2==0)+(100*35)), 'box_on', 1, 'color', [1 0 0 ], 'alpha', 0.5,...
+                  'box_dodge', 1, 'box_dodge_amount', .55, 'dot_dodge_amount', .75,...
+                  'box_col_match', 1);
+              h3 = raincloud_plot(PerfSorted{1,ii}(mm,find( Tseg2==0)+(100*40):end), 'box_on', 1, 'color', [0 0 1 ], 'alpha', 0.5,...
+                  'box_dodge', 1, 'box_dodge_amount', .95, 'dot_dodge_amount', 1.15,...
+                  'box_col_match', 1);
+
+              LimtYMax= max([h1{1,1}.YData,h2{1,1}.YData,h3{1,1}.YData]);
+              LimtYMax= LimtYMax+( LimtYMax*0.05);
+              LimtYMin= min([h1{1,2}.YData,h2{1,2}.YData,h3{1,2}.YData]);
+              LimtYMin=LimtYMin+(LimtYMin*0.05);
+
+              set(gca,'YLim', [LimtYMin LimtYMax]);
+
+              line([1 1]*nanmean(PerfSorted{1,ii}(mm,1:find( Tseg2==0))),[-0.65 10], 'Color',[0 1 0], 'LineStyle','--')
+              line([1 1]*nanmean(PerfSorted{1,ii}(mm,find( Tseg2==0):find( Tseg2==0)+(100*40))),[-0.65 10], 'Color',[1 0 0], 'LineStyle','--')
+              line([1 1]*nanmean(PerfSorted{1,ii}(mm,find( Tseg2==0)+(100*40):end)),[-0.65 10], 'Color',[0 0 1], 'LineStyle','--')
+              if mm<=4, rr=1,elseif mm>4 & mm<=8, rr=3, else rr=5, end
+              disp(num2str(mm))
+              disp(num2str(nanmean(ptrackerPerf{ii}(Evnt_BlockStart2(rr):Evnt_BlockStart2(rr)+desiredFs*60*10,1))))
+              h4=line([1 1]*nanmean(ptrackerPerf{ii}(Evnt_BlockStart2(rr):Evnt_BlockStart2(rr)+desiredFs*60*10,1)),[-0.65 10], 'Color',[0 0 0], 'LineStyle','--','Linewidth',2)
+
+              % mean(ptrackerPerf{ii}(Evnt_BlockStart2(1):Evnt_BlockStart2(1)+desiredFs*60*10,1),1)
+              legend([h1{1}, h2{1}, h3{1}, h4(1)], {'Before','During','After','Prior Baseline'})
+              %       set(gca,'YLim', [-0.09 0.09]);
+              set(gca,'XLim', [-10 100]);
+              xlabel(['Performance'])
+              title(['Performance Before During After Stim for ', Mont{mm}])
+              set(gca,'ytick',[])
+        fname=[ 'Subj Perf During Stim-' DatasetsIncluded{ii} '-Trial-' num2str(mm)];
+        set(gcf,'Name',fname,'Position',[361         139         556         846],'PaperPositionMode','auto')
+        
+%          if SveAllpics==1
+%              h = gcf;
+%              saveas(h,strcat(prefix,fname,'.fig'),'fig');
+%              print(h,'-dpng', [prefix,fname], '-r300');
+%              print(h,'-dpdf', [prefix,fname], '-r600');
+% 
+%          end
+%          if closefigs==1, close all,  end
+     
+      end 
+
+
+
+
+
+
+
+
+
+
+
+
+
  for mm=1:TrialTotals
    
      if mm<=length(Evnt_Stimstrt)
@@ -522,6 +640,11 @@ Perfout.DuringStim{mm,2}     =MontAll{ii,mm};
 
 Perfout.PostStim{mm,1}       =ptrackerPerf{ii}(Evnt_Stimstrt2(mm)+(41.5*desiredFs):Evnt_Stimstrt2(mm)+((41.5+30)*desiredFs),1); 
 Perfout.PostStim{mm,2}       =MontAll{ii,mm};
+
+
+   
+
+
 
 
 %% Plotting Topos Loop    
@@ -731,15 +854,14 @@ Perfout.PostStim{mm,2}       =MontAll{ii,mm};
     fname=['Topo DC- Sub ',DatasetsIncluded{ii}, '-',datmont,' Trial ', num2str(mm),'-JustSpectrum'];
     set(gcf,'Name',fname,'Position',[1000        1107         257         231]);
 
-    if SveAllpics==1
-        h = gcf;
-        saveas(h,strcat(prefix,fname,'.fig'),'fig');
-        saveas(h,strcat(prefix,fname,'.png'),'png');
-        saveas(h,strcat(prefix,fname,'.pdf'),'pdf');
-        print(h,'-dpng', [prefix,fname], '-r600');
-
-    end
-    if closefigs==1, close all,  end
+     if SveAllpics==1
+         h = gcf;
+         saveas(h,strcat(prefix,fname,'.fig'),'fig');
+         print(h,'-dpng', [prefix,fname], '-r300');
+         print(h,'-dpdf', [prefix,fname], '-r600');
+         
+     end
+     if closefigs==1, close all,  end
     
      %=====================================================================
      %                  Calculate Bandpower Ratio
@@ -791,10 +913,13 @@ Perfout.PostStim{mm,2}       =MontAll{ii,mm};
              end
          end 
      
-     
+         
+     %=====================================================================
+     %                 Plotting The Whole Experiment
+     %=====================================================================     
      [b,a]=butter(3,[[0.5, 40]/1000],'bandpass');
      figure; 
-     test=filtfilt(b,a,BLcorDC{1,1}(16,:));
+     test=filtfilt(b,a,BLcorDC{ii}(16,:));
      time_vect=([0:length(test)-1]/fs{1})/60;
      plot(time_vect, test,'color',[	0, 115, 117]./255);
      ylabel('Voltage (\muV)')
@@ -846,6 +971,15 @@ Perfout.PostStim{mm,2}       =MontAll{ii,mm};
          print(h,'-dpdf', [prefix,fname], '-r600');
          
      end
+     
+     
+
+     
+     
+     
+     
+     
+     
      
      %=====================================================================
      %                  During Stim Topos Only 
@@ -1034,7 +1168,7 @@ end % End of Phase picking loop.
      %=====================================================================
  
      [b,a]=butter(3,[[0.5, 40]/1000],'bandpass');
-     test=filtfilt(b,a,BLcorDC{1,1}(16,:));
+     test=filtfilt(b,a,BLcorDC{ii}(16,:));
      time_vect=([0:length(test)-1]/fs{1})/60;  
      
      EEG_SpecInfo{ii,1}=EEGout.BandPower;
