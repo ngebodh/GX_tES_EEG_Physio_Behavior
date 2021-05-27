@@ -39,7 +39,8 @@ if nargin < 3
 end
 
 if nargin < 4
-      load('D:\GX Project\Analysis\ANTEEG32.mat');
+        load('ANTEEG32.mat');
+%       load('D:\GX Project\Analysis\ANTEEG32.mat');
 %     load('..\data\location_file\BioSemi64.mat');
 
 end

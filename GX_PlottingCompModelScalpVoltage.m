@@ -15,12 +15,12 @@ close all
 
 SveAllpics=1; 
 closefigs=1;
-Daterec='Model_06302020';
+Daterec='Model_05262020';
 
 
 %% Setting Save Path 
   
-  pathsave=strcat(['D:\GX Project\Results\ModelTopoplots\' Daterec '\']);
+  pathsave=strcat(['D:\GX\Results\ModelTopoplots\' Daterec '\']);
   prefix = strcat(pathsave);
 
     if SveAllpics==1 %1-Save output pics, 0-Don'd save output pics
