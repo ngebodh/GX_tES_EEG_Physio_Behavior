@@ -38,14 +38,15 @@ close all
 
 %% Set Flags
 
-SaveTrialedData=1; %Save the trialed data 0-No don't save, 1- Yes, save.
-PlotTopoplots=1; %Defines if you want topoplots for each stim trial plotted
-SveAllpics=1; 
+SaveTrialedData=0; %Save the trialed data 0-No don't save, 1- Yes, save.
+PlotTopoplots=0; %Defines if you want topoplots for each stim trial plotted
+cal_bandpower =1;%Defines if you want to do the band power calculations
+SveAllpics=0; 
 closefigs=1;
 ClearMatfiles=1;
 PhaseDesignAll=1;%Run both phase 1 and 2? 1-Yes, 0-No. 
 PhaseDesign=2;   %If run specific phase, select phase, either 1 or 2 
-Daterec='05182021';%'09142020';
+Daterec='06142021';%'05182021';%'09142020';
 
 
 %% Create Results folder        
@@ -65,7 +66,7 @@ end
 
     prefix = strcat(pathsave);
 
-    if SveAllpics==1 %1-Save output pics, 0-Don'd save output pics
+    if SveAllpics==1 | cal_bandpower==1 %1-Save output pics, 0-Don'd save output pics
         
         existance=exist(strcat(pathsave,'FigOutput'));
         if existance==0
@@ -580,21 +581,21 @@ end
 
               set(gca,'YLim', [LimtYMin LimtYMax]);
 
-              line([1 1]*nanmean(PerfSorted{1,ii}(mm,1:find( Tseg2==0))),[-0.65 10], 'Color',[0 1 0], 'LineStyle','--')
-              line([1 1]*nanmean(PerfSorted{1,ii}(mm,find( Tseg2==0):find( Tseg2==0)+(100*40))),[-0.65 10], 'Color',[1 0 0], 'LineStyle','--')
-              line([1 1]*nanmean(PerfSorted{1,ii}(mm,find( Tseg2==0)+(100*40):end)),[-0.65 10], 'Color',[0 0 1], 'LineStyle','--')
+              line([1 1]*nanmean(PerfSorted{1,ii}(mm,1:find( Tseg2==0))),[-0.65 10], 'Color',[0 1 0], 'LineStyle','--');
+              line([1 1]*nanmean(PerfSorted{1,ii}(mm,find( Tseg2==0):find( Tseg2==0)+(100*40))),[-0.65 10], 'Color',[1 0 0], 'LineStyle','--');
+              line([1 1]*nanmean(PerfSorted{1,ii}(mm,find( Tseg2==0)+(100*40):end)),[-0.65 10], 'Color',[0 0 1], 'LineStyle','--');
               if mm<=4, rr=1,elseif mm>4 & mm<=8, rr=3, else rr=5, end
-              disp(num2str(mm))
-              disp(num2str(nanmean(ptrackerPerf{ii}(Evnt_BlockStart2(rr):Evnt_BlockStart2(rr)+desiredFs*60*10,1))))
-              h4=line([1 1]*nanmean(ptrackerPerf{ii}(Evnt_BlockStart2(rr):Evnt_BlockStart2(rr)+desiredFs*60*10,1)),[-0.65 10], 'Color',[0 0 0], 'LineStyle','--','Linewidth',2)
+              disp(num2str(mm));
+              disp(num2str(nanmean(ptrackerPerf{ii}(Evnt_BlockStart2(rr):Evnt_BlockStart2(rr)+desiredFs*60*10,1))));
+              h4=line([1 1]*nanmean(ptrackerPerf{ii}(Evnt_BlockStart2(rr):Evnt_BlockStart2(rr)+desiredFs*60*10,1)),[-0.65 10], 'Color',[0 0 0], 'LineStyle','--','Linewidth',2);
 
               % mean(ptrackerPerf{ii}(Evnt_BlockStart2(1):Evnt_BlockStart2(1)+desiredFs*60*10,1),1)
-              legend([h1{1}, h2{1}, h3{1}, h4(1)], {'Before','During','After','Prior Baseline'})
+              legend([h1{1}, h2{1}, h3{1}, h4(1)], {'Before','During','After','Prior Baseline'});
               %       set(gca,'YLim', [-0.09 0.09]);
               set(gca,'XLim', [-10 100]);
-              xlabel(['Performance'])
-              title(['Performance Before During After Stim for ', Mont{mm}])
-              set(gca,'ytick',[])
+              xlabel(['Performance']);
+              title(['Performance Before During After Stim for ', Mont{mm}]);
+              set(gca,'ytick',[]);
         fname=[ 'Subj Perf During Stim-' DatasetsIncluded{ii} '-Trial-' num2str(mm)];
         set(gcf,'Name',fname,'Position',[361         139         556         846],'PaperPositionMode','auto')
         
@@ -874,7 +875,9 @@ Perfout.PostStim{mm,2}       =MontAll{ii,mm};
          
      end
      if closefigs==1, close all,  end
-    
+
+     
+%{     
      %=====================================================================
      %                  Calculate Bandpower Ratio
      %=====================================================================
@@ -969,7 +972,10 @@ Perfout.PostStim{mm,2}       =MontAll{ii,mm};
              end
          end 
         EEGout.BandPower{mm,6}  ={'Peak PSD in dB','Peak Frequency in Hz'};
-         
+ 
+        
+%}        
+        
 %      %=====================================================================
 %      %                 Plotting The Whole Experiment
 %      %=====================================================================     
@@ -1107,7 +1113,144 @@ Perfout.PostStim{mm,2}       =MontAll{ii,mm};
      
      
      
-     end %======================= End of Plot Topoplot Loop ===============   
+     end %======================= End of Plot Topoplot Loop =============== 
+     
+ 
+     
+     
+     
+     
+     
+if cal_bandpower==1
+    
+     %=====================================================================
+     %                  Calculate Bandpower Ratio
+     %=====================================================================
+   
+     
+     for jj=1:3 %Pre During Post
+          datmont=EEGout.PreStim{mm,2}; %Data montage
+             if lower(datmont(1))=='f'
+                 channum=9;  %FC5
+             elseif lower(datmont(1))=='m'
+                 channum=15; %C3
+             elseif lower(datmont(1))=='p'
+                 channum=20; %CP5
+             end
+         
+         
+         if jj==1 %Pre Stim
+             datpull=EEGout.PreStim{mm,1}(1:32,:);
+%              datin=mean(datpull,2);
+%              labels='Pre Stim';
+
+             
+         elseif jj==2 %During Stim 
+             %Normalize to  the pre stimulation data
+             datpull=EEGout.DuringStim{mm,1}(1:32,:);%-mean(EEGout.PreStim{mm,1}(1:32,:),2);
+          
+             
+%             if str2num(datmont(2))==0
+%                 locs=1:length(datpull);
+%             else
+%                 [~,locs]=findpeaks(1*datpull(channum,:), 'MinPeakDistance',50,'MinPeakProminence',500,'Annotate','extents');
+%             end
+             
+%              magamp=2e4;
+%              datin=mean(datpull(:,locs),2);
+             labels='During Stim';
+             
+         elseif jj==3 %Post Stim 
+             datpull=EEGout.PostStim{mm,1}(1:32,:);
+%              datin=mean(datpull,2);
+             labels='Post Stim';
+             
+         end
+         
+     
+          %Calculate the Welch Spectrum for bandpower cal. 
+         [pxx_bp{jj},ff]=pwelch(datpull(channum,:),2000,1000, 2000,2000); 
+     end 
+     
+    band_strt =[0 3 7  12 28];
+    bands_end =[3 7 12 20 32];
+     for bb=1:3
+         for bb2 =1: length(band_strt)
+     
+            bndpwer(bb, bb2) = bandpower(db(pxx_bp{bb}),ff,[band_strt(bb2) bands_end(bb2)],'psd');
+        end 
+     end 
+     bndpwer_ratio = abs(bndpwer(2,:)./bndpwer(1,:));%Ratio of During/pre
+%      EEGout.BandPower{mm,1}  =bndpwer_ratio;
+     EEGout.BandPower{mm,2}  =MontAll{ii,mm};
+%      EEGout.BandPower{mm,3}  ={'0-3 Hz','3-7 Hz','7-12 Hz','12-20 Hz','28-32 Hz'};
+     EEGout.BandPower{mm,3}  ={'During/Pre Stim PSD Ratio at Dominant Freq'};
+     
+     %=====================================================================
+     %                  Calculate Peak Frequency
+     %=====================================================================
+     
+         datmont=EEGout.PreStim{mm,2}; %Data montage
+         if ~isempty( datmont)
+             if str2num(datmont(2:end))==30 || str2num(datmont(2:end))==5 %For 30 and 5 Hz
+                 clear pks locs
+                 %Since we only want to look at during stim we only look at
+                 %dimension 2 : db(pxx{2}
+                 [pks, locs]=findpeaks(db(pxx_bp{2}),'MinPeakProminence',20,'Annotate','extents');
+                 %Peak PSD in dB
+                 [~, dummy_ind]=max(pks);
+                 EEGout.BandPower{mm,4}=pks(dummy_ind); 
+                 
+                 %Peak frequency in Hz
+                 EEGout.BandPower{mm,5}=ff(locs(dummy_ind));
+                 
+                 EEGout.BandPower{mm,1} = abs(pks(dummy_ind)/db(pxx_bp{1}(locs(dummy_ind))));
+
+             elseif str2num(datmont(2:end))==0 %For 0 Hz
+                 %Since its a 1-sided spectrum in the ppx variable we can't
+                 %can't use the find peaks algo because it does not peak
+                 %and go down before 0. So we'll just take the max at 0. 
+                 
+                 %Peak PSD in dB
+                 EEGout.BandPower{mm,4}= db(pxx_bp{2}(1));
+
+                 %Peak frequency in Hz
+                 EEGout.BandPower{mm,5}=0;
+
+                 EEGout.BandPower{mm,1} = abs(db(pxx_bp{2}(1))/db(pxx_bp{1}(1)));
+             end
+         end 
+        EEGout.BandPower{mm,6}  ={'Peak PSD in dB','Peak Frequency in Hz'};     
+     
+     
+end %%============= END OF BANDPOWER CAL LOOP ====================     
+     
+     
+     
+     
+     
+     
+     
+     
+     
+     
+     
+     
+     
+     
+     
+     
+     
+     
+     
+     
+     
+     
+     
+     
+     
+     
+     
  
      
      end 
@@ -1237,33 +1380,33 @@ end % End of Phase picking loop.
      time_vect=([0:length(test)-1]/fs{1})/60;
      plot(time_vect, test,'color',[	0, 115, 117]./255);
 %      ylim([-1,1].*max(test)+50)
-     ylabel('Voltage (\muV)')
+     ylabel('Voltage (\muV)');
      hold on
      
      time_vect_perf=([0:length(ptrackerPerf{ii})-1]/100)/60;
      yyaxis right
      lh = plot(time_vect_perf+(AllEventsTime{ii}(1)/60),ptrackerPerf{ii},'color',[139, 0, 0] ./255)
      lh.Color=[[139, 0, 0] ./255,0.30]; %Sets the line transparency (35%) and line color. 
-     ylim([-1,1].*max(ptrackerPerf{ii})*3)
-     ylabel('CTT Deviation')
-     set(gca,'ycolor','k')
+     ylim([-1,1].*max(ptrackerPerf{ii})*3);
+     ylabel('CTT Deviation');
+     set(gca,'ycolor','k');
      hold on
      for kk =1:length(AllEvents{ii})
         xl=xline(AllEventsTime{ii}(kk)/60);
         
         if str2num(AllEventsCode{ii}{kk})==2
-           xl.Label={'Block Start Code:02'}
-           xl.LineStyle =':'
+           xl.Label={'Block Start Code:02'};
+           xl.LineStyle =':';
            xl.LabelHorizontalAlignment = 'left';
             xl.LabelVerticalAlignment = 'bottom';
         elseif str2num(AllEventsCode{ii}{kk})==16
-           xl.Label={'Stim Start Code:16'}
-           xl.LineStyle =':'   
+           xl.Label={'Stim Start Code:16'};
+           xl.LineStyle =':';   
            xl.LabelHorizontalAlignment = 'left';
            xl.LabelVerticalAlignment = 'top';
         elseif str2num(AllEventsCode{ii}{kk})==32
-           xl.Label={'Stim Stop Code:32'}
-           xl.LineStyle =':'   
+           xl.Label={'Stim Stop Code:32'};
+           xl.LineStyle =':';   
            xl.LabelHorizontalAlignment = 'right';
            xl.LabelVerticalAlignment = 'bottom';
         end 
@@ -1271,10 +1414,10 @@ end % End of Phase picking loop.
       hold on
      end 
      
-     xlabel('Time (mins)')
-     xlim([min(time_vect)-1.5,max(time_vect)+1])
+     xlabel('Time (mins)');
+     xlim([min(time_vect)-1.5,max(time_vect)+1]);
      fname=['WholeTimeseries- Sub ',DatasetsIncluded{ii}, '-',strcat(Montages{:}),' Elec-',EEG.chanlocs(16).labels];
-     set(gca, 'XMinorTick','on') 
+     set(gca, 'XMinorTick','on'); 
      set(gcf,'Name',fname,'Position',[2 634 1917 389]);
      
      if SveAllpics==1
@@ -1286,6 +1429,7 @@ end % End of Phase picking loop.
          print(h,'-dpdf', [prefix,fname], '-r600');
          
      end
+     if closefigs==1, close all,  end
      
      
      
@@ -1302,12 +1446,11 @@ end % End of Phase picking loop.
      
      
      
-     
-     
+   if ~isempty(EEGout.BandPower)  
      EEG_SpecInfo{ii,1}=EEGout.BandPower;
      EEG_SpecInfo{ii,2}=DatasetsIncluded{ii};
      EEG_SpecInfo{ii,3}=[test;time_vect]; %This is just the concatinated time(minutes) and voltage (uV)
- 
+   end 
  
  
  

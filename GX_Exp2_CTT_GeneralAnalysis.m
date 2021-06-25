@@ -29,8 +29,8 @@ tic
 
 
 %% Set Flags
-SveAllpics=1; % Save the figure output? 0=No, 1=Yes
-closefigs=0;  % Close all the figures periodocally? 0=No, 1=Yes
+SveAllpics=0; % Save the figure output? 0=No, 1=Yes
+closefigs=1;  % Close all the figures periodocally? 0=No, 1=Yes
 matlab_version='2019b';
 
 
@@ -48,7 +48,7 @@ ver(end-14:end-10)
     %This is where all the flagged figures will be saved. 
     %NOTE: All items in the folder will be deleted before saving new items!
 %     pathsave=strcat('D:\GX Project\Results\DataOutput_Exp2_CTT\');
-    pathsave=strcat('D:\GX\Results\DataOutput_Exp2_CTT\');
+    pathsave=strcat('D:\GX\Results\DataOutput_Exp2_CTT\05292021\');
     
     prefix = strcat(pathsave);
 
@@ -628,7 +628,7 @@ NumUniqueSubjsNums=(unique(str2num(AA(:,1:2))));
   end 
   end
  
- return 
+%  return 
  
  
  
@@ -936,7 +936,7 @@ figure
  for rr=3
  DatIn=cell2mat(eval(PlotThese{rr,1}))*PlotThese{1,2};
  DatIn_SE=  nanstd(DatIn)./sqrt(sum(~isnan(DatIn),1));
- errorbar([1:2],mean(DatIn),DatIn_SE*1.95)
+ errorbar([1:2],mean(DatIn),DatIn_SE*1.96)
   xlim([0.5 2.5])
  set(gca,'XTick',[1:2],'XTickLabels', MontageMat2)
 ylabel('Change(%)')
@@ -946,4 +946,34 @@ ylabel('Change(%)')
  
  
  disp('done')
+ 
+ 
+ figure;
+ errorbar([1:2],mean(cell2mat(Testt)),   std(cell2mat(Testt))./    sqrt(sum(~isnan(cell2mat(Testt)),1)) *1.96 )
+   xlim([0.5 2.5])
+ set(gca,'XTick',[1:2],'XTickLabels', MontageMat2)
+ylabel('Change(%)')
+ 
+Testt2= cell2mat(Testt);
+%Make a blue colorbar to input to figure;  
+ figure;
+%  plot(1,1,'color', clrs(1,:));
+hb=colorbar;
+ylabel(hb, PlotThese{rr,4},'Fontsize',16);
+colormap(flipud( cbrewer('seq', 'Blues', 20, 'pchip')))
+fname='Dummy_fig_bluecolorbar';
+set(gcf,'Name',fname) 
+if SveAllpics==1
+   h = gcf;
+   saveas(h,strcat(prefix,fname,'.fig'),'fig');
+%    saveas(h,strcat(prefix,fname,'.png'),'png');
+   print(h,'-dpng', [prefix,fname], '-r600');
+   print(h,'-depsc', [prefix,fname], '-r600');
+   print(h,'-dpdf', [prefix,fname], '-r600');
+end
+if closefigs==1, close all,  end 
+ 
+ 
+ 
+ 
  
