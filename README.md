@@ -1,7 +1,12 @@
 # Dataset of Concurrent EEG, ECG, and Behavior with Multiple Doses of transcranial Electrical Stimulation
 
 This repository contains supporting code for the [GX dataset](https://zenodo.org/record/4456079#.YK8ak6hKiF5).
-For an in-depth description of the dataset please see the accompanying dataset publication [TO DO : ADD NATURE DATA INFO]
+For an in-depth description of the dataset please see the accompanying dataset publication.
+
+
+<img src="./Images/GX_Fig2_V2_062921-01.png" alt="drawing" width="95%"/>
+
+**Experiment Overview:** **(a)** Behavioral Task. **(b)** EEG and stimulation layout in 2D. **(c)** MRI-derived 3D head model with stimulation montage. **(d)** Task set-up. **(e)** Experiment 1 programmed block design with **(f)** trigger details. **(g)** Experiment 2 block design with **(h)** trigger details.  
 
 
 ## Description:
@@ -9,36 +14,20 @@ For an in-depth description of the dataset please see the accompanying dataset p
 A dataset combining high-density electroencephalography (EEG) with physiological and continuous behavioral metrics during transcranial electrical stimulation (tES; including tDCS and tACS). Data includes within subject application of nine High-Definition tES (HD-tES) types targeted three brain regions (frontal, motor, parietal) with three waveforms (DC, 5Hz, 30Hz), with more than 783 total stimulation trials over 62 sessions with EEG, physiological (ECG or EKG, EOG), and continuous behavioral vigilance/alertness metrics.
 
 
-### Folder set up
-Generally the project folder is set up as below:
+## What format is the GX dataset available in? 
+* Raw [EEG, ECG, EOG data](https://zenodo.org/record/4456079#.YOYCLuhKguW) in `.cnt` formant
+* Raw [EEG, ECG, EOG data](https://openneuro.org/datasets/ds003670) formated to comply with [BIDS](https://bids.neuroimaging.io/) standard where data are in `.set` format ([EEGlab](https://sccn.ucsd.edu/eeglab/index.php))
+* Raw downsampled EEG, ECG, EOG data (1k Hz) in `.mat` format for [Experiment 1](https://zenodo.org/record/3840615#.YOYKfehKguU) and [Experiment 2](https://zenodo.org/record/3840617#.YOYKj-hKguU) (works with [MATLAB](https://www.mathworks.com/help/matlab/ref/load.html) and [Python](https://scipy-cookbook.readthedocs.io/items/Reading_mat_files.html))
+* Raw behavioral [CTT data](https://zenodo.org/record/4456079#.YOYCLuhKguW) `.csv` format
+* [Questionnaire data](https://zenodo.org/record/4456079#.YOYKtOhKguX) in `.xlsx` format
 
-```
-+GX
-|--Analysis
-    +--GX_Exp1_CTT_GeneralAnalysis.m
-    +--GX_Exp2_CTT_GeneralAnalysis.m
-    ...
-|--Data
-    +--0101
-        +--0101
-            +--ptracker-0101.csv
-            +-- ptracker-summary-0101..txt
-        +--GX_01_2019-09-24_15-45-53.cnt
-        +--GX_01_2019-09-24_15-45-53.evt
-        +--MATLABfilestream0101924.mat
-        +--MATLABfilestream0101924.txt
-    +--0102
-    +--0103
-    +--0104
-    ... 
-|--Documents
-|--Results
 
-```
+## Getting Started
 
-### What do I need to get started?
+### What do I need to get started right away?
 You can get started right away by using the downsampled `.mat` files linked to in the main data repository [see 'Extras' here](https://zenodo.org/record/3837213#.YK9ThahKjZQ). 
-The `.mat` files are compatible with MATLAB and Python (other platforms have not been tested). Each of the files contains the ~70 min recording combined with the CTT data and information on the stimulation trials. 
+The `.mat` files are compatible with [MATLAB](https://www.mathworks.com/help/matlab/ref/load.html) and [Python](https://scipy-cookbook.readthedocs.io/items/Reading_mat_files.html) (other platforms have not been tested). Each of the files contains the ~70 min recording combined with the CTT data and information on the stimulation trials. 
+
 
 ##### What's in the dowsampled ``.mat`` files?
 The ``.mat`` files contain a matlab structre that contains the following:
@@ -57,10 +46,67 @@ The ``.mat`` files contain a matlab structre that contains the following:
     * ptrackerTime <- Time vector for the CTT data
     * ptrackerfs <- The sampling frequency for the CTT data 100 Hz.
 
-NOTE: The CTT and EEG data can be time alligned by using the 1st trigger in the EEG. The CTT starts at the same time the 1st trigger want sent to the EEG. 
 
 
-TO DO: Insert pictures
+
+
+### I want to get started with the raw data in `.cnt` format
+To get started with the [EEG, ECG, EOG data](https://zenodo.org/record/4456079#.YOYCLuhKguW) in `.cnt` format, start with the folder set up below. Once everything is set up you can run either `GX_Exp1_CTT_GeneralAnalysis.m` to get results for Experiment 1 or `GX_Exp1_CTT_GeneralAnalysis.m` to get results for Experiment 2. Please be sure to adjust all the hardcoded paths accordingly. 
+
+
+
+### Folder set up
+Generally the project folder is set up as below:
+
+```
++GX
+|--Analysis
+    +--GX_Exp1_CTT_GeneralAnalysis.m
+    +--GX_Exp2_CTT_GeneralAnalysis.m
+    ...
+|--Data
+    +--0101 (Participant number: 01 and session number: 01)
+        +--0101
+            +--ptracker-0101.csv (Behavioral Data)
+            +-- ptracker-summary-0101..txt
+        +--GX_01_2019-09-24_15-45-53.cnt  (EEG, ECG, EOG data)
+        +--GX_01_2019-09-24_15-45-53.evt
+        +--MATLABfilestream0101924.mat
+        +--MATLABfilestream0101924.txt
+    +--0102 (Participant number: 01 and session number: 02)
+    +--0103
+    +--0104
+    ... 
+|--Documents
+|--Results
+
+```
+
+### I want to look at individual stimulation trials
+To pull out and look at all the stimulation trials for the whole study you can do so by running the ``GX_PullingDataIntoTrials_PlottingTopoplots.m`` script. This script runs through all the data and pull out the EEG and CTT data into 30 sec Pre During Post stimulation trials. Please pay attention to the code flags which allow for the plotting and saving for different things.
+
+All trials for both experiments are indexed on [Figshare](https://figshare.com/authors/Nigel_Gebodh/8797454).
+
+* The trials plotted as **timeseries, spectrograms, and behavioral CTT**, similar to below, can be found [here](https://figshare.com/articles/figure/Dataset_of_Concurrent_EEG_ECG_and_Behavior_with_Multiple_Doses_of_transcranial_Electrical_Stimulation-_Stimulation_Trials_Timeseries/14810442)
+
+<p align="center">
+<img src="./Images/StimTrialsTimeseries.PNG" alt="drawing" width="65%"/>
+</p>
+
+
+* The **PSD's** across trials, similar to below, can be found [here](https://figshare.com/articles/figure/Dataset_of_Concurrent_EEG_ECG_and_Behavior_with_Multiple_Doses_of_transcranial_Electrical_Stimulation-_Stimulation_Trials_PSD/14810517)
+
+<p align="center">
+<img src="./Images/PSDs.PNG" alt="drawing" width="85%"/>
+</p>
+
+
+* The **topoplots** during stimulation across trials, similar to below, can be found [here](https://figshare.com/articles/figure/Dataset_of_Concurrent_EEG_ECG_and_Behavior_with_Multiple_Doses_of_transcranial_Electrical_Stimulation-_Stimulation_Trials_Topoplots/14810478)
+
+<p align="center">
+<img src="./Images/topoplots.png" alt="drawing" width="85%"/>
+</p>
+
 
 ### Going through the code
 
@@ -76,8 +122,9 @@ To explore the outcomes for Experiment 2 the ```GX_Exp2_CTT_GeneralAnalysis.m```
 
 TO DO: Insert pictures
 
-#### I want to look at the stimulation trials
-To pull out and look at all the stimulation trials for the whole study you can do so by running the ``GX_PullingDataIntoTrials_PlottingTopoplots.m`` script. This script runs through all the data and pull out the EEG and CTT data into 30 sec Pre During Post stimulation trials. Please pay attention to the code flags which allow for the plotting and saving for different things. 
+
+
+
 
 TO DO: Insert pictures
 
