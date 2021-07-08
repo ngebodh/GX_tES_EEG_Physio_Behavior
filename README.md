@@ -13,7 +13,7 @@ For an in-depth description of the dataset please see the accompanying dataset p
 ## Contents
 - [Description](#description)
 - [Data availability](#data-availability)
-- [Getting Started](#getting-started)
+- [Getting started](#getting-started)
    * [Right away](#right-away)
    * [From scratch](#from-scratch)
 - [Data visualization and plotting](#data-visualization-and-plotting)
