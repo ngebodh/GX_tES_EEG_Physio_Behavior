@@ -81,18 +81,18 @@ Generally the project folder is set up as below:
 ```
 +GX
 |--Analysis
-    +--GX_Exp1_CTT_GeneralAnalysis.m
-    +--GX_Exp2_CTT_GeneralAnalysis.m
+    |--GX_Exp1_CTT_GeneralAnalysis.m
+    |--GX_Exp2_CTT_GeneralAnalysis.m
     ...
 |--Data
     +--0101 (Participant number: 01 and session number: 01)
         +--0101
-            +--ptracker-0101.csv (Behavioral Data)
-            +-- ptracker-summary-0101..txt
-        +--GX_01_2019-09-24_15-45-53.cnt  (EEG, ECG, EOG data)
-        +--GX_01_2019-09-24_15-45-53.evt
-        +--MATLABfilestream0101924.mat
-        +--MATLABfilestream0101924.txt
+            |--ptracker-0101.csv (Behavioral Data)
+            |-- ptracker-summary-0101..txt
+        |--GX_01_2019-09-24_15-45-53.cnt  (EEG, ECG, EOG data)
+        |--GX_01_2019-09-24_15-45-53.evt
+        |--MATLABfilestream0101924.mat
+        |--MATLABfilestream0101924.txt
     +--0102 (Participant number: 01 and session number: 02)
     +--0103
     +--0104
@@ -132,7 +132,7 @@ All trials for both experiments are indexed on [Figshare](https://figshare.com/a
 
 ## Downsampling
 ##### The files are too large how do I downsample them?!
-Since the raw data are sampled at 2k Hz moving and loading files may become difficult on some machines. If you would like to downsample the data please use the ```GX_DataDownSample.m``` script. The script features a GUI that allows you to paste in file names, locations, and downsample factor according to how much you want to downsample the data. 
+Since the raw data are sampled at 2 kHz moving and loading files may become difficult on some machines. If you would like to downsample the data please use the ```GX_DataDownSample.m``` script. The script features a GUI that allows you to paste in file names, locations, and downsample factor according to how much you want to downsample the data. The script assumes the file structure shown above.  
 
 <p align="center">
 <img src="./Images/DownsampleGUI.PNG" alt="drawing" width="30%"/>
