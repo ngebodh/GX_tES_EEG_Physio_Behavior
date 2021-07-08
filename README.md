@@ -9,12 +9,30 @@ For an in-depth description of the dataset please see the accompanying dataset p
 **Experiment Overview:** **(a)** Behavioral Task. **(b)** EEG and stimulation layout in 2D. **(c)** MRI-derived 3D head model with stimulation montage. **(d)** Task set-up. **(e)** Experiment 1 programmed block design with **(f)** trigger details. **(g)** Experiment 2 block design with **(h)** trigger details.  
 
 
-## Description:
+
+## Contents
+- [Description](#description)
+- [Data availability](#data-availability)
+- [Getting Started](#getting-started)
+   * [Right away](#right-away)
+   * [From scratch](#from-scratch)
+- [Data visualization and plotting](#data-visualization-and-plotting)
+- [Downsampling](#downsampling)
+- [Demographics](#demographics)
+- [Acknowledgments](#acknowledgments)
+
+<!-- toc -->
+
+
+
+
+## Description
 
 A dataset combining high-density electroencephalography (EEG) with physiological and continuous behavioral metrics during transcranial electrical stimulation (tES; including tDCS and tACS). Data includes within subject application of nine High-Definition tES (HD-tES) types targeted three brain regions (frontal, motor, parietal) with three waveforms (DC, 5Hz, 30Hz), with more than 783 total stimulation trials over 62 sessions with EEG, physiological (ECG or EKG, EOG), and continuous behavioral vigilance/alertness metrics.
 
 
-## What format is the GX dataset available in? 
+## Data availability
+##### What format is the GX dataset available in?
 * Raw [EEG, ECG, EOG data](https://zenodo.org/record/4456079#.YOYCLuhKguW) in `.cnt` formant
 * Raw [EEG, ECG, EOG data](https://openneuro.org/datasets/ds003670) formated to comply with [BIDS](https://bids.neuroimaging.io/) standard where data are in `.set` format ([EEGlab](https://sccn.ucsd.edu/eeglab/index.php))
 * Raw downsampled EEG, ECG, EOG data (1k Hz) in `.mat` format for [Experiment 1](https://zenodo.org/record/3840615#.YOYKfehKguU) and [Experiment 2](https://zenodo.org/record/3840617#.YOYKj-hKguU) (works with [MATLAB](https://www.mathworks.com/help/matlab/ref/load.html) and [Python](https://scipy-cookbook.readthedocs.io/items/Reading_mat_files.html))
@@ -24,7 +42,8 @@ A dataset combining high-density electroencephalography (EEG) with physiological
 
 ## Getting Started
 
-### What do I need to get started right away?
+### Right away
+##### What do I need to get started right away?
 You can get started right away by using the downsampled `.mat` files linked to in the main data repository [see 'Extras' here](https://zenodo.org/record/3837213#.YK9ThahKjZQ). 
 The `.mat` files are compatible with [MATLAB](https://www.mathworks.com/help/matlab/ref/load.html) and [Python](https://scipy-cookbook.readthedocs.io/items/Reading_mat_files.html) (other platforms have not been tested). Each of the files contains the ~70 min recording combined with the CTT data and information on the stimulation trials. 
 
@@ -50,12 +69,13 @@ The ``.mat`` files contain a matlab structre that contains the following:
 
 
 
-### I want to get started with the raw data in `.cnt` format
+###   From scratch
+##### I want to get started with the raw data in `.cnt` format
 To get started with the [EEG, ECG, EOG data](https://zenodo.org/record/4456079#.YOYCLuhKguW) in `.cnt` format, start with the folder set up below. Once everything is set up you can run either `GX_Exp1_CTT_GeneralAnalysis.m` to get results for Experiment 1 or `GX_Exp1_CTT_GeneralAnalysis.m` to get results for Experiment 2. Please be sure to adjust all the hardcoded paths accordingly. 
 
 
 
-### Folder set up
+#### Folder set up
 Generally the project folder is set up as below:
 
 ```
@@ -82,7 +102,8 @@ Generally the project folder is set up as below:
 
 ```
 
-### I want to look at individual stimulation trials
+## Data visualization and plotting
+##### I want to look at individual stimulation trials
 To pull out and look at all the stimulation trials for the whole study you can do so by running the ``GX_PullingDataIntoTrials_PlottingTopoplots.m`` script. This script runs through all the data and pull out the EEG and CTT data into 30 sec Pre During Post stimulation trials. Please pay attention to the code flags which allow for the plotting and saving for different things.
 
 All trials for both experiments are indexed on [Figshare](https://figshare.com/authors/Nigel_Gebodh/8797454).
@@ -108,36 +129,24 @@ All trials for both experiments are indexed on [Figshare](https://figshare.com/a
 </p>
 
 
-### Going through the code
 
-
-#### Experiment 1- CTT
-Once all the raw data is downloaded and all supporting toolboxes are obtained, the ```GX_Exp1_CTT_GeneralAnalysis.m``` script can be run to analyze and extract data and outcomes for Experiment 1. This script mainly looks at the outcomes of the CTT data. Please note that directories were hard coded and would have to be recoded for the appropriate directories.
-
-TO DO: Insert pictures
-
-
-#### Experiment 2- CTT
-To explore the outcomes for Experiment 2 the ```GX_Exp2_CTT_GeneralAnalysis.m``` script can be used. This script mainly looks at the outcomes of the CTT data. 
-
-TO DO: Insert pictures
-
-
-
-
-
-TO DO: Insert pictures
-
-
-#### The files are too large how do I downsample them?!
+## Downsampling
+##### The files are too large how do I downsample them?!
 Since the raw data are sampled at 2k Hz moving and loading files may become difficult on some machines. If you would like to downsample the data please use the ```GX_DataDownSample.m``` script. The script features a GUI that allows you to paste in file names, locations, and downsample factor according to how much you want to downsample the data. 
 
-TO DO: Insert pictures
+<p align="center">
+<img src="./Images/DownsampleGUI.PNG" alt="drawing" width="30%"/>
+</p>
 
-#### I want to explore the demographic data of the study
-To pull in and look at the demographic data of the study you can use the ``GX_PlottingDemographicInfo.m`` script. This pulls in the tabulated demogrpahic data that were compiled over the course of the study and plots them. 
+## Demographics
+##### I want to explore the demographic data of the study
+To pull in and look at the demographic data of the study you can use the ``GX_PlottingDemographicInfo.m`` script. This pulls in the tabulated demogrpahic data that were compiled over the course of the study and plots them similar to below. 
 
-TO DO: Insert pictures
+<p align="center">
+<img src="./Images/Demographic Info.PNG" alt="drawing" width="80%"/>
+</p>
+
+
 
 ## Acknowledgments
 
