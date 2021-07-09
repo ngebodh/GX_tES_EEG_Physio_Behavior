@@ -106,7 +106,10 @@ Generally the project folder is set up as below:
 The files are ordered by each subject/participant's session. For example participant 1's third session would be labeled 0103. Here "01" indicates the participant ID and "03" indicates the session number. Note that some participants returned to repeat the experiment and were assigned new participant IDs. 
 
 Participants who repeated the experiment:
-* 01
+* 01:( Repeated sessions with different current intensities)
+  *  Session 0101 was repeated in 0102
+  *  Session 0103 was repeated in 0106
+  *  Session 0104 was repeated in 0105   
 * 12:( New assigned ID 19)
 * 15:( New assigned ID 18)
 * 21:( New assigned ID 25, then 26)
