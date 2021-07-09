@@ -94,13 +94,23 @@ Generally the project folder is set up as below:
         |--MATLABfilestream0101924.mat
         |--MATLABfilestream0101924.txt
     +--0102 (Participant number: 01 and session number: 02)
-    +--0103
-    +--0104
+    +--0103 (Participant number: 01 and session number: 03)
+    +--0104 (Participant number: 01 and session number: 04)
     ... 
 |--Documents
 |--Results
 
 ```
+
+#### File naming convention
+The files are ordered by each subject/participant's session. For example participant 1's third session would be labeled 0103. Here "01" indicates the participant ID and "03" indicates the session number. Note that some participants returned to repeat the experiment and were assigned new participant IDs. 
+
+Participants who repeated the experiment:
+* 01
+* 12:( New assigned ID 19)
+* 15:( New assigned ID 18)
+* 21:( New assigned ID 25, then 26)
+* 22:( New assigned ID 23, then 24)   
 
 ## Data visualization and plotting
 ##### I want to look at individual stimulation trials
