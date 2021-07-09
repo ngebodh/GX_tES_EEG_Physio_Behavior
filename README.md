@@ -106,15 +106,44 @@ Generally the project folder is set up as below:
 The files are ordered by each subject/participant's session. For example participant 1's third session would be labeled 0103. Here "01" indicates the participant ID and "03" indicates the session number. Note that some participants returned to repeat the experiment and were assigned new participant IDs. 
 
 Participants who repeated the experiment:
-* 01:( Repeated sessions with different current intensities)
-  *  Session 0101 was repeated in 0102
-  *  Session 0103 was repeated in 0106
-  *  Session 0104 was repeated in 0105   
-* 12:( New assigned ID 19)
-* 15:( New assigned ID 18)
-* 21:( New assigned ID 25, then 26)
-* 22:( New assigned ID 23, then 24)   
 
+**Repeated sessions with different current intensities**
+```
++--01:
+   |--> Session 0101 was repeated as 0102
+   |--> Session 0103 was repeated as 0106
+   |--> Session 0104 was repeated as 0105   
+  
+```  
+**Repeated sessions with same current intensities**
+```
++--12: 
+   +New assigned ID 19
+   |--> Session 1201 was repeated as 1902
+   |--> Session 1202 was repeated as 1901 
+      
++--15:
+   +New assigned ID 18
+   |--> Session 1501 was repeated as 1802
+   |--> Session 1502 was repeated as 1801 
+      
++--21:
+    +New assigned ID 25
+    |--> Session 2101 was repeated as 2502 
+    |--> Session 2102 was repeated as 2501
+    +New assigned ID 26
+    |--> Session 2101 was repeated as 2601 
+    |--> Session 2102 was repeated as 2602
+      
++--22:
+    +New assigned ID 23 
+    |--> Session 2201 was repeated as 2302
+    |--> Session 2202 was repeated as 2301
+    +New assigned ID 24
+    |--> Session 2201 was repeated as 2401
+    |--> Session 2202 was repeated as 2402
+
+```
 ## Data visualization and plotting
 ##### I want to look at individual stimulation trials
 To pull out and look at all the stimulation trials for the whole study you can do so by running the ``GX_PullingDataIntoTrials_PlottingTopoplots.m`` script. This script runs through all the data and pull out the EEG and CTT data into 30 sec Pre During Post stimulation trials. Please pay attention to the code flags which allow for the plotting and saving for different things.
