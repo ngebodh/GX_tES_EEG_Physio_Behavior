@@ -1,7 +1,11 @@
 # Dataset of Concurrent EEG, ECG, and Behavior with Multiple Doses of transcranial Electrical Stimulation
 
 This repository contains supporting code for the [GX dataset](https://zenodo.org/record/4456079#.YK8ak6hKiF5).
-For an in-depth description of the dataset please see the accompanying dataset publication.
+For an in-depth description of the dataset please see the accompanying dataset publication:
+
+
+> Nigel Gebodh, Zeinab Esmaeilpour, Abhishek Datta, and Marom Bikson. "[Dataset of concurrent EEG, ECG, and behavior with multiple doses of transcranial electrical stimulation.](https://zenodo.org/record/4456079#.YToz-4hKguX)" _[Nature Scientific Data](https://www.nature.com/sdata/)_ (2021) _In Press_.
+
 
 
 <img src="./Images/GX_Fig2_V2_062921-01.png" alt="drawing" width="95%"/>
@@ -34,10 +38,10 @@ A dataset combining high-density electroencephalography (EEG) with physiological
 ## Data availability
 ##### What format is the GX dataset available in?
 * Raw [EEG, ECG, EOG data](https://zenodo.org/record/4456079#.YOYCLuhKguW) in `.cnt` formant
-* Raw [EEG, ECG, EOG data](https://openneuro.org/datasets/ds003670) formated to comply with [BIDS](https://bids.neuroimaging.io/) standard where data are in `.set` format ([EEGlab](https://sccn.ucsd.edu/eeglab/index.php))
+* Raw [EEG, ECG, EOG data](https://openneuro.org/datasets/ds003670/versions/1.1.0) formated to comply with [BIDS](https://bids.neuroimaging.io/) standard where data are in `.set` format ([EEGlab](https://sccn.ucsd.edu/eeglab/index.php))
 * Raw downsampled EEG, ECG, EOG data (1k Hz) in `.mat` format for [Experiment 1](https://zenodo.org/record/3840615#.YOYKfehKguU) and [Experiment 2](https://zenodo.org/record/3840617#.YOYKj-hKguU) (works with [MATLAB](https://www.mathworks.com/help/matlab/ref/load.html) and [Python](https://scipy-cookbook.readthedocs.io/items/Reading_mat_files.html))
 * Raw behavioral [CTT data](https://zenodo.org/record/4456079#.YOYCLuhKguW) `.csv` format
-* [Questionnaire data](https://zenodo.org/record/4456079#.YOYKtOhKguX) in `.xlsx` format
+* [Questionnaire data](https://zenodo.org/record/4456079/files/GX_Subject%20Info%20%26%20Behavioral%20Data.xlsx?download=1) in `.xlsx` format
 
 
 ## Getting Started
