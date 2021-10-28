@@ -1,16 +1,15 @@
 # Dataset of Concurrent EEG, ECG, and Behavior with Multiple Doses of transcranial Electrical Stimulation
 
 This repository contains supporting code for the [GX dataset](https://zenodo.org/record/4456079#.YK8ak6hKiF5).
-For an in-depth description of the dataset please see the accompanying dataset publication:
+For an in-depth description of the dataset please see the accompanying dataset publication. **Please cite this work as**:
 
 
-> Nigel Gebodh, Zeinab Esmaeilpour, Abhishek Datta, and Marom Bikson. "[Dataset of concurrent EEG, ECG, and behavior with multiple doses of transcranial electrical stimulation.](https://zenodo.org/record/4456079#.YToz-4hKguX)" _[Nature Scientific Data](https://www.nature.com/sdata/)_ (2021) _In Press_.
+> Gebodh, N., Esmaeilpour, Z., Datta, A. et al. Dataset of concurrent EEG, ECG, and behavior with multiple doses of transcranial electrical stimulation. Sci Data 8, 274 (2021). https://doi.org/10.1038/s41597-021-01046-y
 
 
-
-<img src="./Images/GX_Fig2_V2_062921-01.png" alt="drawing" width="95%"/>
-
-**Experiment Overview:** **(a)** Behavioral Task. **(b)** EEG and stimulation layout in 2D. **(c)** MRI-derived 3D head model with stimulation montage. **(d)** Task set-up. **(e)** Experiment 1 programmed block design with **(f)** trigger details. **(g)** Experiment 2 block design with **(h)** trigger details.  
+<p align="center">
+  <img src="https://user-images.githubusercontent.com/31016876/139349245-a93f6068-dbcb-4c53-b22e-fbaa073681aa.gif">
+</p>
 
 
 
@@ -28,11 +27,28 @@ For an in-depth description of the dataset please see the accompanying dataset p
 <!-- toc -->
 
 
-
-
 ## Description
 
-A dataset combining high-density electroencephalography (EEG) with physiological and continuous behavioral metrics during transcranial electrical stimulation (tES; including tDCS and tACS). Data includes within subject application of nine High-Definition tES (HD-tES) types targeted three brain regions (frontal, motor, parietal) with three waveforms (DC, 5Hz, 30Hz), with more than 783 total stimulation trials over 62 sessions with EEG, physiological (ECG or EKG, EOG), and continuous behavioral vigilance/alertness metrics.
+A dataset combining high-density electroencephalography (EEG) with physiological and continuous behavioral metrics during transcranial electrical stimulation (tES; including tDCS and tACS). Data includes within participant application of nine High-Definition tES (HD-tES) types targeted three brain regions (frontal, motor, parietal) with three waveforms (DC, 5Hz, 30Hz), with more than 783 total stimulation trials over 62 sessions with EEG, physiological (ECG or EKG, EOG), and continuous behavioral vigilance/alertness metrics.
+
+### Experiment Overview
+
+<img src="./Images/GX_Fig2_V2_062921-01.png" alt="drawing" width="95%"/>
+
+**Experiment Overview:** **(a)** Behavioral Task. **(b)** EEG and stimulation layout in 2D. **(c)** MRI-derived 3D head model with stimulation montage. **(d)** Task set-up. **(e)** Experiment 1 programmed block design with **(f)** trigger details. **(g)** Experiment 2 block design with **(h)** trigger details.  
+
+
+
+#### Experiment 1: Example participant's data
+<p align="center">
+<img src="https://user-images.githubusercontent.com/31016876/139350106-14c71955-8649-43b1-b74b-d9d34fb85b5f.PNG" alt="drawing" width="90%"/>
+<p>
+  
+#### Experiment 2: Example participant's data
+<p align="center">
+<img src="https://user-images.githubusercontent.com/31016876/139350369-c05e64f4-7987-4696-a41d-9fca2bbf5de9.PNG" alt="drawing" width="90%"/>
+<p>
+
 
 
 ## Data availability
@@ -149,6 +165,12 @@ Participants who repeated the experiment:
 
 ```
 ## Data visualization and plotting
+
+<p align="center">
+  <img src="https://user-images.githubusercontent.com/31016876/139349320-4344ba64-0bde-4f06-9db4-e0903d64e425.gif">
+</p>
+
+
 ##### I want to look at individual stimulation trials
 To pull out and look at all the stimulation trials for the whole study you can do so by running the ``GX_PullingDataIntoTrials_PlottingTopoplots.m`` script. This script runs through all the data and pull out the EEG and CTT data into 30 sec Pre During Post stimulation trials. Please pay attention to the code flags which allow for the plotting and saving for different things.
 
