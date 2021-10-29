@@ -91,7 +91,7 @@ The ``.mat`` files contain a matlab structre that contains the following:
 
 ###   From scratch
 ##### I want to get started with the raw data in `.cnt` format
-To get started with the [EEG, ECG, EOG data](https://zenodo.org/record/4456079#.YOYCLuhKguW) in `.cnt` format, start with the folder set up below. Once everything is set up you can run either `GX_Exp1_CTT_GeneralAnalysis.m` to get results for Experiment 1 or `GX_Exp1_CTT_GeneralAnalysis.m` to get results for Experiment 2. Please be sure to adjust all the hardcoded paths accordingly. 
+To get started with the [EEG, ECG, EOG data](https://zenodo.org/record/4456079#.YOYCLuhKguW) in `.cnt` format, start with the folder set up below. Once everything is set up you can run either `GX_Exp1_CTT_GeneralAnalysis.m` to get results for Experiment 1 or `GX_Exp2_CTT_GeneralAnalysis.m` to get results for Experiment 2. Please be sure to adjust all the hardcoded paths accordingly. 
 
 
 
