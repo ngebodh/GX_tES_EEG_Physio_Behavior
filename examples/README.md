@@ -11,3 +11,14 @@ For an in-depth description of the dataset please see the accompanying dataset p
 ## What's here
 This folder contains some examples of getting the data and working with it. 
 More examples will be added over time. 
+
+
+## Example
+* Importing `.set` files into Python and `MNE`. This [Google Colab Notebook](https://colab.research.google.com/drive/1b0olN3BzqkeNtqPO31Hwx04EvksTLrOy?usp=sharing) shows how to import the `.set` files from [OpenNeuro](https://openneuro.org/datasets/ds003670/versions/1.1.0) into Python and pass the data to `MNE`
+
+
+<p align="center">
+<a href="https://colab.research.google.com/drive/1b0olN3BzqkeNtqPO31Hwx04EvksTLrOy?usp=sharing">
+  <img src="../Images/ColabNotebookExample1.png" alt="drawing"/>
+</a>
+</p>
