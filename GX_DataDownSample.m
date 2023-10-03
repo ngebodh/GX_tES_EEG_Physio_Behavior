@@ -25,7 +25,7 @@
 %           |----_0101
 %                |----_0101
 %                     |----ptracker-0101.csv
-%                     |----ptracker-summary-0101..txt
+%                     |----ptracker-summary-0101..txt  <-(yes, double dot)
 %                |----GX_01_2019-09-24_15-45-53.cnt
 %                |----GX_01_2019-09-24_15-45-53.evt
 %                |----MATLABfilestream0101924.mat
@@ -41,6 +41,15 @@
 %   https://www.ant-neuro.com/support/supporting-documentation-and-downloads
 %
 %Written by Nigel Gebodh in Oct. 2019.
+%
+%Updated:
+%-10/2/2023:
+%+Fixed bug on writing montages to mat files.
+%+Now default downsample mode takes all 4 digit numeric folder and
+%downsamples it when given path to data. 
+%   
+%
+%
 
 %% Clear Residuals 
 clear all
@@ -56,12 +65,12 @@ clear all
         clear par
        
         while 1
-            prompt = {'Enter path to save downsampled EEG data',...
-                      'Enter path to EEG data to be downsampled',...
-                      'Enter data set numbers  or use defaults (comma seperated)',...
-                      'Use default data set numbers(1-Yes|0-No)',...
-                      'Enter downsample factor (integer, Original-fs/Desired-fs)'};
-            dims = [1 40;1 40; 3 40; 1 40; 1 40];
+            prompt = {sprintf('Step1. \nEnter path to save downsampled EEG data\n'),...
+                      sprintf('\nStep 2.\nEnter path to get the EEG data to be downsampled\n'),...
+                      sprintf('\nStep 3.(Option A or B)\nA)\nEnter dataset numbers  or use defaults (comma seperated)\n'),...
+                      sprintf('B)\nUse default dataset numbers? \nDownsamples all files with 4 digits (like 0103) in "path to EEG data" folder \n\nOptions:\n1-Yes, downsample all files found in path (Step 1) \n0-No use files I provided above (Step 2)\n'),...
+                      sprintf('\n\nStep 4.\nEnter downsample factor (integer, Original-fs/Desired-fs)')};
+            dims = [1 60;1 60; 3 60; 1 60; 1 60];
             def = {'D:\GX Project\Results\DataDownSampled\',...
                    'D:\GX Project\Data\',...
                    '0101',...
@@ -78,7 +87,20 @@ clear all
                 par.DSfactorIn=str2num(answer{5});
                 
                 if ~exist(par.DatLocIn)
-                    disp([{'The path to the data enter does not exist.Please enter valid path'}])
+%                     disp([{sprintf('ERROR in PATH TO DATA: \n\nThe path to the data enter does not exist.Please enter valid path.\nPath passed where data is was: %s', par.DatLocIn)}])
+                    error_msg=sprintf(['ERROR in PATH TO DATA: \n\nSee dialog Step 2. \nThe path to the data enter does not exist.',...
+                                      'Please enter valid path. \nAlso check that the path is formatted correctly and ends with a back slash.',...
+                                      '\nPath you passed where data is was:\n %s'], par.DatLocIn);
+                    error(error_msg)
+%                     return
+                    
+                elseif ~exist(par.DatSaveLocIn)
+%                     disp([{sprintf('ERROR in SAVE DATA PATH: \n\nThe path you entered to save data in does not exist.Please create is or enter valid path.\nPath passed to save data is: %s', par.DatSaveLocIn)}])
+                    error_msg=sprintf(['ERROR in SAVE DATA PATH: \n\nSee dialog Step 1. \nThe path you entered to save data in does not exist.',...
+                                       'Please create it or enter valid path. \nAlso check that the path is formatted correctly and ends with a back slash.',...
+                                       '\nPath you passed to save data is:\n %s'], par.DatSaveLocIn);
+                    error(error_msg)
+%                     return
                 else 
                     break
                 end 
@@ -112,13 +134,55 @@ tic
     %These are the files that we want to look at
     if par.UseDefaultDataIn==1
        %These are the default files to load and downsample
-       DatasetsIncluded={'0101','0102','0103','0104','0201','0202'};
-    else 
-       DatasetsIncluded= par.DatasetsIncludedIn;
+       
+       %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+       %                Pull Default Files
+       %  Look through the folder and find all files that have numeric
+       %   labels like 0101. 
+       %       
+               % Specify the folder path
+               folderPath = DataLoc;
+
+               % List all files in the folder
+               fileList = dir(folderPath);
+
+               % Initialize an empty cell array to store the filtered file names
+               filteredFileNames = {};
+
+               % Loop through the files
+               for i = 1:length(fileList)
+                   % Get the current file name
+                   fileName = fileList(i).name;
+
+                   % Check if the file name contains exactly four digits
+                   if ~isempty(regexp(fileName, '\d{4}', 'once'))
+                       % If it has four digits, add it to the filteredFileNames array
+                       filteredFileNames{end+1} = fileName;
+                   end
+               end
+
+
+                % Initialize an empty cell array to store the combined file names
+                combinedFileNames = {};
+
+                % Loop through the filtered file names and add them to the combinedFileNames array
+                for i = 1:length(filteredFileNames)
+                    combinedFileNames = [combinedFileNames, filteredFileNames{i}];
+                end
+               DatasetsIncluded=combinedFileNames; 
+
+        %        DatasetsIncluded={'0101','0102','0103','0104','0201','0202'};
+
+            else 
+               DatasetsIncluded= par.DatasetsIncludedIn;
     end 
+       %                Pull Default Files - End 
+       %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+            
     
+       
     %Strip off any spaces
-    DatasetsIncluded=cellfun(@(x) regexprep(x, '\s+',''),DatasetsIncluded,'UniformOutput',false)
+    DatasetsIncluded=cellfun(@(x) regexprep(x, '\s+',''),DatasetsIncluded,'UniformOutput',false);
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     
     %Downsampling settings 
@@ -257,7 +321,8 @@ ptrackerTime{ii}=[[0:length(ptrackerPerf{ii})-1]./desiredFs]';
              %with all the stim type of that size. 
             Mont=repmat(Montages(1),sum(str2num(vertcat(EEG.triggers.code))==16),1)'; 
          else
-            Mont=repmat(Montages,sum(str2num(vertcat(EEG.triggers.code))==16),1);
+%             Mont=repmat(Montages,sum(str2num(vertcat(EEG.triggers.code))==16),1);
+            Mont=repmat(Montages,4,1); %NG-9/29/2023
             Mont=Mont(:)';
          end
         mm=1; %Counter
