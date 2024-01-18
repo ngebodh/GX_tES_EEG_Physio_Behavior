@@ -1,0 +1,58 @@
+cff-version: 1.2.0
+title: >-
+  Dataset of Concurrent EEG, ECG, and Behavior with Multiple
+  Doses of transcranial Electrical Stimulation Code Repository
+message: >-
+  If you use this software, please cite it using the
+  metadata from this file.
+type: software
+authors:
+  - given-names: Nigel
+    family-names: Gebodh
+    email: ngebodh01@citymail.cuny.edu
+    affiliation: 'The City College of New York, CUNY'
+    orcid: 'https://orcid.org/0000-0001-5457-5641'
+identifiers:
+  - type: url
+    value: 'https://github.com/ngebodh/GX_tES_EEG_Physio_Behavior'
+    description: Link to code repository
+  - type: doi
+    value: 10.1038/s41597-021-01046-y
+    description: 'Data and code descriptor '
+repository-code: 'https://github.com/ngebodh/GX_tES_EEG_Physio_Behavior'
+abstract: >-
+  This repository contains supporting code for the GX
+  dataset and supporting publications. 
+
+  The GX dataset is a dataset combining high-density
+  electroencephalography (EEG) with physiological and
+  continuous behavioral metrics during transcranial
+  electrical stimulation (tES; including tDCS and tACS).
+  Data includes within participant application of nine
+  High-Definition tES (HD-tES) types targeted three brain
+  regions (frontal, motor, parietal) with three waveforms
+  (DC, 5Hz, 30Hz), with more than 783 total stimulation
+  trials over 62 sessions with EEG, physiological (ECG or
+  EKG, EOG), and continuous behavioral vigilance/alertness
+  metrics.
+keywords:
+  - EEG
+  - Behavior
+  - Attention
+  - Vigilance
+  - ECG
+  - tACS
+  - tDCS
+  - tES
+  - Brain stimulation
+  - Neuromodulation
+  - Neuroscience
+  - Heart rate
+  - Physiology
+license: MIT
+version: 1.0.0
+date-released: '2020-05-14'
+
+
+# This CITATION.cff file was generated with cffinit.
+# https://bit.ly/cffinit to generate yours today!
