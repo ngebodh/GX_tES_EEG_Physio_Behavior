@@ -1,0 +1,70 @@
+"
+
+F30 Median = 2 ± 2.875 
+M30 Median = 2 ± 3.25 
+z = -0.355, p = 0.72234 n=(F30:9,M30:9)
+MPRB Cor Coef r = 0.156±0.333
+There was no significant difference (at an alpha =0.05)in the change in KSS (Po-Pr) ratings betweenF30 (Median:2,IQR:2.875) and M30 (Median:2,IQR:3.25);
+The effect size measured by MPRB Cor Coef r = 0.156 ± 0.333, indicating a small effect size
+
+"
+"
+
+F30 Mean = -9.60877 ± 17.1836 
+M30 Mean = -6.00818 ± 17.7388 
+t(8) = -6.4991, p = 0.00018828 n=(F30:9,M30:9)
+Cohen's d = -0.163(-0.801,-0.079)
+There was a significant difference (at an alpha =0.05)in the change in Perf mean(D-Pr) (During minus Pre) ratings betweenF30 (Mean:-9.609±17.184) and M30 (Mean:-6.008±17.739);
+The effect size measured by Cohen's d = -0.163 ± 0.084, indicating a small effect size
+
+"
+"
+
+F30 Median = 9.68231 ± 33.8352 
+M30 Median = 3.61183 ± 56.785 
+z = 0.178, p = 0.85895 n=(F30:9,M30:9)
+MPRB Cor Coef r = 0.067±0.4
+There was no significant difference (at an alpha =0.05)in the change in RMSSD(D-Pr) (During minus Pre) ratings betweenF30 (Median:9.682,IQR:33.835) and M30 (Median:3.612,IQR:56.785);
+The effect size measured by MPRB Cor Coef r = 0.067 ± 0.4, indicating a small effect size
+
+"
+"
+
+F30 Median = 243.943 ± 134.865 
+M30 Median = 99.1098 ± 138.322 
+z = 1.599, p = 0.10974 n=(F30:9,M30:9)
+MPRB Cor Coef r = 0.6±0.267
+There was no significant difference (at an alpha =0.05)in the change in lf hf ratio(D-Pr) (During minus Pre) ratings betweenF30 (Median:243.943,IQR:134.865) and M30 (Median:99.11,IQR:138.322);
+The effect size measured by MPRB Cor Coef r = 0.6 ± 0.267, indicating a large effect size
+
+"
+"
+
+F30 Mean = -2.33752 ± 3.74503 
+M30 Mean = 2.55454 ± 3.30419 
+t(8) = -3.2015, p = 0.012583 n=(F30:9,M30:9)
+Cohen's d = -1.212(-3.669,-0.439)
+There was a significant difference (at an alpha =0.05)in the change in Perf mean(Po-Pr) (Post minus Pre) ratings betweenF30 (Mean:-2.338±3.745) and M30 (Mean:2.555±3.304);
+The effect size measured by Cohen's d = -1.212 ± 0.773, indicating a large effect size
+
+"
+"
+
+F30 Median = 0.604077 ± 19.5926 
+M30 Median = 0.654815 ± 7.85086 
+z = 1.125, p = 0.26039 n=(F30:9,M30:9)
+MPRB Cor Coef r = 0.422±0.222
+There was no significant difference (at an alpha =0.05)in the change in Alpha Theta Ratio (Post minus Pre) ratings betweenF30 (Median:0.604,IQR:19.593) and M30 (Median:0.655,IQR:7.851);
+The effect size measured by MPRB Cor Coef r = 0.422 ± 0.222, indicating a medium effect size
+
+"
+"
+
+F30 Mean = 4.57382 ± 5.07161 
+M30 Mean = 1.01349 ± 5.04552 
+t(8) = 4.1947, p = 0.0030183 n=(F30:9,M30:9)
+Cohen's d = 0.686(0.292,2.338)
+There was a significant difference (at an alpha =0.05)in the change in Delta Theta Ratio (Post minus Pre) ratings betweenF30 (Mean:4.574±5.072) and M30 (Mean:1.013±5.046);
+The effect size measured by Cohen's d = 0.686 ± -1.652, indicating a large effect size
+
+"
