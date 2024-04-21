@@ -247,8 +247,10 @@ To pull in and look at the demographic data of the study you can use the ``GX_Pl
 In this work we compare behavioral and physiological outcomes of Experiment 2 of the GX data set. </br>
 We compare outcomes with F30 and M30 stimulation.
 
+Code and processed data can be found [here](https://github.com/ngebodh/GX_tES_EEG_Physio_Behavior/tree/master/GX_F30vM30).
 
-Details on the analysis can be found [here](https://html-preview.github.io/?url=https://github.com/ngebodh/GX_tES_EEG_Physio_Behavior/blob/master/GX_F30vM30/Analysis/GX_F30vM30_Analysis.html) .
+
+Details on the analysis can be found [here.](https://html-preview.github.io/?url=https://github.com/ngebodh/GX_tES_EEG_Physio_Behavior/blob/master/GX_F30vM30/Analysis/GX_F30vM30_Analysis.html)
 
 </details>
 
