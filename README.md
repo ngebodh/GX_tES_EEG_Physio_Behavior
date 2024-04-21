@@ -15,13 +15,16 @@ For an in-depth description of the dataset please see the accompanying dataset p
 
 ## Contents
 - [Description](#description)
-- [Data availability](#data-availability)
-- [Getting started](#getting-started)
+- [Dataset Info](#dataset-info)
+   * [Data availability](#data-availability)
+   * [Getting started](#getting-started)
    * [Right away](#right-away)
    * [From scratch](#from-scratch)
-- [Data visualization and plotting](#data-visualization-and-plotting)
-- [Downsampling](#downsampling)
-- [Demographics](#demographics)
+   * [Data visualization and plotting](#data-visualization-and-plotting)
+   * [Downsampling](#downsampling)
+   * [Demographics](#demographics)
+- [Subsequent Work](#subsequent-work)
+   * [Comparing F30 and M30 Stimulation](#comparing-f30-and-m30-stimulation)
 - [Acknowledgments](#acknowledgments)
 
 <!-- toc -->
@@ -31,6 +34,7 @@ For an in-depth description of the dataset please see the accompanying dataset p
 
 A dataset combining high-density electroencephalography (EEG) with physiological and continuous behavioral metrics during transcranial electrical stimulation (tES; including tDCS and tACS). Data includes within participant application of nine High-Definition tES (HD-tES) types targeted three brain regions (frontal, motor, parietal) with three waveforms (DC, 5Hz, 30Hz), with more than 783 total stimulation trials over 62 sessions with EEG, physiological (ECG or EKG, EOG), and continuous behavioral vigilance/alertness metrics.
 
+## Dataset Info
 ### Experiment Overview
 
 <img src="./Images/GX_Fig2_V2_062921-01.png" alt="drawing" width="95%"/>
@@ -50,17 +54,32 @@ A dataset combining high-density electroencephalography (EEG) with physiological
 <p>
 
 
+</br>
+
+
 
 ## Data availability
+<details>
+<summary> More Details! </summary>
+  
 ##### What format is the GX dataset available in?
 * Raw [EEG, ECG, EOG data](https://zenodo.org/record/4456079#.YOYCLuhKguW) in `.cnt` formant
 * Raw [EEG, ECG, EOG data](https://openneuro.org/datasets/ds003670/versions/1.1.0) formated to comply with [BIDS](https://bids.neuroimaging.io/) standard where data are in `.set` format ([EEGlab](https://sccn.ucsd.edu/eeglab/index.php))
 * Raw downsampled EEG, ECG, EOG data (1k Hz) in `.mat` format for [Experiment 1](https://zenodo.org/record/3840615#.YOYKfehKguU) and [Experiment 2](https://zenodo.org/record/3840617#.YOYKj-hKguU) (works with [MATLAB](https://www.mathworks.com/help/matlab/ref/load.html) and [Python](https://scipy-cookbook.readthedocs.io/items/Reading_mat_files.html))
 * Raw behavioral [CTT data](https://zenodo.org/record/4456079#.YOYCLuhKguW) `.csv` format
 * [Questionnaire data](https://zenodo.org/record/4456079/files/GX_Subject%20Info%20%26%20Behavioral%20Data.xlsx?download=1) in `.xlsx` format
+* 
+</details>
 
+</br>
+
+
+## More Dataset Info
+<details>
+<summary> More Details! </summary>
 
 ## Getting Started
+
 
 ### Right away
 ##### What do I need to get started right away?
@@ -214,8 +233,34 @@ To pull in and look at the demographic data of the study you can use the ``GX_Pl
 <img src="./Images/Demographic Info.PNG" alt="drawing" width="80%"/>
 </p>
 
+</details>
 
+</br>
+
+
+## Subsequent Work
+
+### Comparing F30 and M30 Stimulation
+<details>
+<summary> Details </summary>
+  
+In this work we compare behavioral and physiological outcomes of Experiment 2 of the GX data set. </br>
+We compare outcome with F30 and M30 stimulation.
+
+
+Details on the analysis can be found [here](https://html-preview.github.io/?url=https://github.com/ngebodh/GX_tES_EEG_Physio_Behavior/blob/master/GX_F30vM30/Analysis/GX_F30vM30_Analysis.html) .
+
+</details>
+
+
+</br>
 
 ## Acknowledgments
 
 Portions of this study were funded by X (formerly Google X), the Moonshot Factory. The funding source had no influence on study conduction or result evaluation. MB is further supported by grants from the National Institutes of Health: R01NS101362, R01NS095123, R01NS112996, R01MH111896, R01MH109289, and (to NG) NIH-G-RISE T32GM136499.
+
+
+
+</br>
+
+
