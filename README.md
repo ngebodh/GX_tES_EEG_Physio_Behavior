@@ -247,6 +247,13 @@ To pull in and look at the demographic data of the study you can use the ``GX_Pl
 In this work we compare behavioral and physiological outcomes of Experiment 2 of the GX data set. </br>
 We compare outcomes with F30 and M30 stimulation.
 
+
+This work is now published in Brain Stimulation:
+> Nigel Gebodh, Vladimir Miskovic, Sarah Laszlo, Abhishek Datta, Marom Bikson. Frontal HD-tACS Enhances Behavioral and EEG Biomarkers of Vigilance in Continuous Attention Task, Brain Stimulation, May, 23 2024. DOI: https://doi.org/10.1016/j.brs.2024.05.009
+
+
+</br>
+
 Code and processed data can be found [here](https://github.com/ngebodh/GX_tES_EEG_Physio_Behavior/tree/master/GX_F30vM30).
 
 
