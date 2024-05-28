@@ -244,11 +244,12 @@ To pull in and look at the demographic data of the study you can use the ``GX_Pl
 <details>
 <summary> Details </summary>
   
-In this work we compare behavioral and physiological outcomes of Experiment 2 of the GX data set. </br>
-We compare outcomes with F30 and M30 stimulation.
+In this work we look at how brain stimulation can change vigilance/attention. </br>
+We compare behavioral and physiological outcomes of Experiment 2 of the GX data set. </br>
+We compare outcomes with F30 and M30 stimulation. 
 
 
-This work is now published in Brain Stimulation:
+This work is published in Brain Stimulation:
 > Nigel Gebodh, Vladimir Miskovic, Sarah Laszlo, Abhishek Datta, Marom Bikson. Frontal HD-tACS Enhances Behavioral and EEG Biomarkers of Vigilance in Continuous Attention Task, Brain Stimulation, May, 23 2024. DOI: https://doi.org/10.1016/j.brs.2024.05.009
 
 
