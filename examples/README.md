@@ -13,12 +13,14 @@ This folder contains some examples of getting the data and working with it.
 More examples will be added over time. 
 
 
-## Example
-* Importing `.set` files into Python and `MNE`. This [Google Colab Notebook](https://colab.research.google.com/drive/1b0olN3BzqkeNtqPO31Hwx04EvksTLrOy?usp=sharing) shows how to import the `.set` files from [OpenNeuro](https://openneuro.org/datasets/ds003670/versions/1.1.0) into Python and pass the data to `MNE`
+
+**Have a request?** Email me: ngebodh01@citymail.cuny.edu
 
 
-<p align="center">
-<a href="https://colab.research.google.com/drive/1b0olN3BzqkeNtqPO31Hwx04EvksTLrOy?usp=sharing">
-  <img src="../Images/ColabNotebookExample1.png" alt="drawing"/>
-</a>
-</p>
+## Examples
+* **Importing `.set` files into Python and `MNE`.**
+ This [Google Colab Notebook](https://colab.research.google.com/drive/1b0olN3BzqkeNtqPO31Hwx04EvksTLrOy?usp=sharing) shows how to import the `.set` files from [OpenNeuro](https://openneuro.org/datasets/ds003670/versions/1.1.0) into Python and pass the data to `MNE`
+
+
+* **Importing `.mat` files into Python.** 
+This [Google Colab Notebook](https://colab.research.google.com/drive/1fXE_i8BfP9d1fQKAiLngsdi065WifU_y?usp=sharing) shows how to download and import the `.mat` files from Zenodo for [Experiment 1](https://zenodo.org/records/8401160) or [Experiment 2](https://zenodo.org/records/3840617) into Python and do some basic analysis. 
