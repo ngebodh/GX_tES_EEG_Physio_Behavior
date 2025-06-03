@@ -43,10 +43,15 @@
 %Written by Nigel Gebodh in Oct. 2019.
 %
 %Updated:
-%-10/2/2023:
-%+Fixed bug on writing montages to mat files.
-%+Now default downsample mode takes all 4 digit numeric folder and
-%downsamples it when given path to data. 
+% -05/28/2025:
+% +Fixed bug on writing the ptracker timeseries out
+% +Changed timers to display load times and elapsed
+% +Changed mat file output to version 7.3
+%
+% -10/2/2023:
+% +Fixed bug on writing montages to mat files.
+% +Now default downsample mode takes all 4 digit numeric folder and
+%  downsamples it when given path to data. 
 %   
 %
 %
@@ -74,8 +79,8 @@ clear all
             def = {'D:\GX Project\Results\DataDownSampled\',...
                    'D:\GX Project\Data\',...
                    '0101',...
-                   '0',...
-                   '8'};
+                   '1',...
+                   '2'};
                
             answer = inputdlg(prompt,dlg_title,dims,def);
             if ~isempty(answer)
@@ -86,7 +91,7 @@ clear all
                 par.UseDefaultDataIn=str2num(answer{4});
                 par.DSfactorIn=str2num(answer{5});
                 
-                if ~exist(par.DatLocIn)
+                if ~exist(par.DatLocIn, 'dir')
 %                     disp([{sprintf('ERROR in PATH TO DATA: \n\nThe path to the data enter does not exist.Please enter valid path.\nPath passed where data is was: %s', par.DatLocIn)}])
                     error_msg=sprintf(['ERROR in PATH TO DATA: \n\nSee dialog Step 2. \nThe path to the data enter does not exist.',...
                                       'Please enter valid path. \nAlso check that the path is formatted correctly and ends with a back slash.',...
@@ -94,7 +99,7 @@ clear all
                     error(error_msg)
 %                     return
                     
-                elseif ~exist(par.DatSaveLocIn)
+                elseif ~exist(par.DatSaveLocIn,'dir')
 %                     disp([{sprintf('ERROR in SAVE DATA PATH: \n\nThe path you entered to save data in does not exist.Please create is or enter valid path.\nPath passed to save data is: %s', par.DatSaveLocIn)}])
                     error_msg=sprintf(['ERROR in SAVE DATA PATH: \n\nSee dialog Step 1. \nThe path you entered to save data in does not exist.',...
                                        'Please create it or enter valid path. \nAlso check that the path is formatted correctly and ends with a back slash.',...
@@ -119,7 +124,14 @@ clear all
     
   
 %% Define Data Locations and Files to Look At
-tic
+
+
+% tic
+% --- Start timing for overall script ---
+t_script_start = tic;
+% -------------------------------------
+
+
     %Where to save the data
     pathsave=par.DatSaveLocIn;%strcat('D:\GX Project\Results\DataDownSampled\');
     
@@ -190,7 +202,10 @@ tic
     
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-for ii=1:length(DatasetsIncluded)        
+
+
+for ii=1:length(DatasetsIncluded)    
+    t_loop_start = tic;
     disp(['Running, downsampling dataset# ' num2str(ii),' of ',num2str(length(DatasetsIncluded))])  
     numcount=1;
 
@@ -250,7 +265,7 @@ ptrackerTime{ii}=[[0:length(ptrackerPerf{ii})-1]./desiredFs]';
     %Define where each EEG file is
     GetFilesFrom=strcat(DataLoc,DatasetsIncluded{ii},'\');
     
-    if ~exist( GetFilesFrom)
+    if ~exist( GetFilesFrom,'dir')
         numcount= numcount+1; %Added to keep the order of existing files
         return       
     end
@@ -279,7 +294,9 @@ ptrackerTime{ii}=[[0:length(ptrackerPerf{ii})-1]./desiredFs]';
         EEG.triggers(1)=[];
     end 
     
-    disp(['      EEG data ',DatasetsIncluded{ii},' loaded, ','time:', num2str(toc)])
+    load_time = toc(t_loop_start);
+    disp(['      EEG data ',DatasetsIncluded{ii},' loaded, ','time taken:', num2str(load_time), ' seconds'])
+
 
     
 %% ______________Set Up Downsampling ______________________________________
@@ -375,29 +392,37 @@ ptrackerTime{ii}=[[0:length(ptrackerPerf{ii})-1]./desiredFs]';
     DSamp.rate=fs;              %Duplicate downsampled fs
     DSamp.npt=length(EEGDataDownSamp(1,:));%Length of downsampled data
     DSamp.Subj=DatasetsIncluded{ii};%Subject file number
-    DSamp.ptrackerPerf=ptrackerPerf{:};
-    DSamp.ptrackerTime=ptrackerTime{:};
+    DSamp.ptrackerPerf=ptrackerPerf{ii}; %NG-05/26/2025 
+    DSamp.ptrackerTime=ptrackerTime{ii}; %NG-05/26/2025 
     DSamp.ptrackerfs = desiredFs;
     
     
     %Save the output 
-    save([pathsave,'EEG_DS_Struct_',DatasetsIncluded{ii}],'DSamp','-v7')
-    disp(['      Downsampled EEG data for ',DatasetsIncluded{ii},' saved, ','time:', num2str(toc)])
+    save([pathsave,'EEG_DS_Struct_',DatasetsIncluded{ii}],'DSamp','-v7.3')
+    load_time =  toc(t_loop_start) - load_time;
+    disp(['      Downsampled EEG data for ',DatasetsIncluded{ii},' saved, ','time taken:', num2str(load_time) ' seconds'])
+
+
     
     %% Check Output
     % t2=[0:length(EEGDataDownSamp(1,:))-1]./fs;
     % figure; plot(EEG.time/1000,EEG.data(1,:)); hold on; plot(t2,EEGDataDownSamp(1,:))
     
+load_time = toc(t_script_start);
+fprintf(['      Elapsed time: %s seconds\n' ], num2str(round(load_time,3)))
 end 
+
+
+
+
 
 %% Display when done
 
-disp(['                    '])
-disp(['                    '])
-disp(['        DONE!       '])
-disp(['                    '])
-disp(['                    '])
-
+elapsed_time = toc(t_script_start);
+fprintf(['\n\n _______________________________________________________________________ \n' ])
+fprintf(['\n\n      Time taken to extract all data: %s (H:M:S:Ms)      \n' ], datestr(elapsed_time/86400, 'HH:MM:SS:FFF'))
+fprintf(['\n\n      DONE!      \n\n\n' ])
+fprintf(['\n\n _______________________________________________________________________ \n' ])
 
 %%
 
